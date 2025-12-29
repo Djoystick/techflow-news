@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="TechFlow - Последние новости о технологиях. ИИ, гаджеты, ПО и многое другое.">
+    <meta name="theme-color" content="#00a8cc">
+    <title>TechFlow - Новости технологий</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/telegram-web-app@7.2/dist/telegram-web-app.js"></script>
+</head>
+<body>
+    <!-- Хедер -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M12 6v6l4 2"></path>
+                    </svg>
+                    <span>TechFlow</span>
+                </div>
+                <nav class="nav">
+                    <button class="nav-link" onclick="filterNews('all')">Все</button>
+                    <button class="nav-link" onclick="filterNews('ai')">ИИ</button>
+                    <button class="nav-link" onclick="filterNews('gadgets')">Гаджеты</button>
+                    <button class="nav-link" onclick="filterNews('software')">ПО</button>
+                    <button class="nav-link" onclick="filterNews('hardware')">Железо</button>
+                </nav>
+                <div class="header-actions">
+                    <button class="btn-admin" onclick="goToAdmin()" title="Админ панель">⚙️</button>
+                    <button class="btn-search" onclick="toggleSearch()">🔍</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Поиск -->
+    <div class="search-bar hidden" id="searchBar">
+        <div class="container">
+            <input type="text" id="searchInput" class="search-input" placeholder="Поиск новостей..." onkeyup="searchNews()">
+            <button class="btn-close-search" onclick="toggleSearch()">✕</button>
+        </div>
+    </div>
+
+    <!-- Главная страница -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Баннер рекомендованной новости -->
+            <section class="featured-section" id="featuredSection"></section>
+
+            <!-- Фильтры и сортировка -->
+            <div class="controls">
+                <div class="sort-controls">
+                    <button class="sort-btn active" onclick="sortNews('date')">Новые</button>
+                    <button class="sort-btn" onclick="sortNews('popular')">Популярные</button>
+                    <button class="sort-btn" onclick="sortNews('comments')">Комментируемые</button>
+                </div>
+            </div>
+
+            <!-- Сетка новостей -->
+            <div class="news-grid" id="newsGrid">
+                <div class="loading">Загрузка новостей...</div>
+            </div>
+
+            <!-- Пагинация -->
+            <div class="pagination" id="pagination"></div>
+        </div>
+    </main>
+
+    <!-- Модальное окно новости -->
+    <div class="modal hidden" id="newsModal">
+        <div class="modal-overlay" onclick="closeNews()"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle"></h2>
+                <button class="modal-close" onclick="closeNews()">✕</button>
+            </div>
+            <div class="modal-body">
+                <img id="modalImage" class="modal-image" src="" alt="">
+                <div class="modal-meta">
+                    <span class="badge" id="modalCategory"></span>
+                    <span class="date" id="modalDate"></span>
+                    <span class="author" id="modalAuthor"></span>
+                </div>
+                <div class="modal-text" id="modalText"></div>
+                <div class="modal-source" id="modalSource"></div>
+                
+                <!-- Кнопки действий -->
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" onclick="shareNews()">📤 Поделиться</button>
+                    <button class="btn btn-secondary" onclick="copyLink()">🔗 Скопировать ссылку</button>
+                </div>
+
+                <!-- Комментарии -->
+                <div class="comments-section">
+                    <h3>Комментарии (<span id="commentsCount">0</span>)</h3>
+                    <div class="comments-list" id="commentsList"></div>
+                    
+                    <!-- Форма комментария -->
+                    <form class="comment-form" id="commentForm" onsubmit="addComment(event)">
+                        <input 
+                            type="text" 
+                            id="commentAuthor" 
+                            class="comment-input" 
+                            placeholder="Ваше имя..."
+                            required
+                        >
+                        <textarea 
+                            id="commentText" 
+                            class="comment-input comment-textarea" 
+                            placeholder="Ваш комментарий..."
+                            required
+                        ></textarea>
+                        <button type="submit" class="btn btn-primary">Отправить</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Уведомление -->
+    <div class="notification hidden" id="notification"></div>
+
+    <!-- Подвал -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2025 TechFlow. Все права защищены.</p>
+                <p>Новостной портал о технологиях | <a href="#" onclick="goToAdmin()">Админ</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/utils.js"></script>
+    <script src="assets/js/storage.js"></script>
+    <script src="assets/js/app.js"></script>
+</body>
+</html>
