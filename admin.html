@@ -92,10 +92,6 @@
             box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
         }
 
-        .btn:active {
-            transform: translateY(0);
-        }
-
         .error-message {
             color: #d32f2f;
             margin-bottom: 15px;
@@ -107,15 +103,14 @@
             border-left: 4px solid #d32f2f;
         }
 
-        .success-message {
-            color: #2e7d32;
-            margin-bottom: 15px;
-            padding: 10px;
-            background: #e8f5e9;
+        .info-box {
+            background: white;
+            padding: 15px;
             border-radius: 6px;
+            border-left: 4px solid #667eea;
+            margin-bottom: 15px;
             font-size: 13px;
-            display: none;
-            border-left: 4px solid #2e7d32;
+            color: #555;
         }
 
         /* АДМИН ПАНЕЛЬ */
@@ -160,20 +155,22 @@
             border-bottom: 1px solid #eee;
             background: #f9f9f9;
             flex-wrap: wrap;
+            overflow-x: auto;
         }
 
         .tab-btn {
             flex: 1;
-            min-width: 150px;
+            min-width: 120px;
             padding: 15px;
             border: none;
             background: none;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
             color: #666;
             transition: all 0.3s;
             border-bottom: 3px solid transparent;
+            white-space: nowrap;
         }
 
         .tab-btn.active {
@@ -197,74 +194,140 @@
             to { opacity: 1; }
         }
 
-        /* ФОРМА */
-        .form-section {
-            margin-bottom: 20px;
+        /* ДИАГНОСТИКА */
+        .diagnostic-item {
+            background: #f9f9f9;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-radius: 6px;
+            border-left: 4px solid #999;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .form-section h3 {
+        .diagnostic-item.success {
+            border-left-color: #388e3c;
+            background: #e8f5e9;
+        }
+
+        .diagnostic-item.error {
+            border-left-color: #d32f2f;
+            background: #ffebee;
+        }
+
+        .diagnostic-item.warning {
+            border-left-color: #ff9800;
+            background: #fff3e0;
+        }
+
+        .diagnostic-item.loading {
+            border-left-color: #1976d2;
+            background: #e3f2fd;
+        }
+
+        .diagnostic-name {
+            font-weight: 600;
             color: #333;
-            margin-bottom: 15px;
-            font-size: 16px;
+            flex: 1;
         }
 
-        .form-group textarea,
-        .form-group select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 13px;
-            font-family: inherit;
-            transition: all 0.3s;
-        }
-
-        .form-group textarea:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 120px;
-        }
-
-        .char-count {
-            font-size: 12px;
-            color: #999;
-            margin-top: 4px;
-        }
-
-        .image-preview {
-            margin-top: 10px;
-            max-width: 200px;
-            border-radius: 6px;
-            max-height: 200px;
-            object-fit: cover;
-            display: none;
-        }
-
-        .checkbox-group {
+        .diagnostic-status {
             display: flex;
             align-items: center;
-            margin: 15px 0;
+            gap: 8px;
+            font-size: 12px;
         }
 
-        .checkbox-group input[type="checkbox"] {
-            width: auto;
-            margin-right: 10px;
+        .diagnostic-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .diagnostic-icon.ok {
+            background: #388e3c;
+        }
+
+        .diagnostic-icon.error {
+            background: #d32f2f;
+        }
+
+        .diagnostic-icon.warning {
+            background: #ff9800;
+        }
+
+        .diagnostic-icon.loading {
+            background: #1976d2;
+        }
+
+        .error-log {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .error-log-empty {
+            color: #4fd1c5;
+            font-style: italic;
+        }
+
+        .error-log-item {
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #4a5568;
+        }
+
+        .error-log-item:last-child {
+            border-bottom: none;
+        }
+
+        .error-log-time {
+            color: #90cdf4;
+            margin-right: 8px;
+        }
+
+        .error-log-type {
+            color: #fab1a0;
+            font-weight: bold;
+        }
+
+        .error-log-message {
+            color: #e2e8f0;
         }
 
         .btn-group {
             display: flex;
             gap: 10px;
             margin-top: 20px;
+            flex-wrap: wrap;
         }
 
-        .btn-group .btn {
-            flex: 1;
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 12px;
+            flex: none;
+        }
+
+        .btn-danger {
+            background: #d32f2f;
+        }
+
+        .btn-success {
+            background: #388e3c;
         }
 
         .btn-secondary {
@@ -274,83 +337,6 @@
 
         .btn-secondary:hover {
             background: #e0e0e0;
-        }
-
-        .btn-danger {
-            background: #d32f2f;
-        }
-
-        .btn-danger:hover {
-            box-shadow: 0 5px 20px rgba(211, 47, 47, 0.4);
-        }
-
-        .btn-success {
-            background: #388e3c;
-        }
-
-        .btn-success:hover {
-            box-shadow: 0 5px 20px rgba(56, 142, 60, 0.4);
-        }
-
-        /* СПИСОК НОВОСТЕЙ */
-        .news-list {
-            display: grid;
-            gap: 15px;
-        }
-
-        .news-item {
-            border: 1px solid #eee;
-            padding: 15px;
-            border-radius: 6px;
-            background: #f9f9f9;
-            transition: all 0.3s;
-        }
-
-        .news-item:hover {
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            background: white;
-        }
-
-        .news-item-title {
-            font-size: 15px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 8px;
-        }
-
-        .news-item-meta {
-            font-size: 12px;
-            color: #999;
-            margin-bottom: 10px;
-        }
-
-        .news-item-meta span {
-            margin-right: 15px;
-        }
-
-        .news-item-actions {
-            display: flex;
-            gap: 8px;
-        }
-
-        .btn-small {
-            padding: 6px 12px;
-            font-size: 12px;
-            flex: none;
-        }
-
-        /* ПОИСК */
-        .search-box {
-            margin-bottom: 20px;
-        }
-
-        .search-box input {
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 14px;
-            width: 100%;
-            max-width: 300px;
         }
 
         /* СТАТИСТИКА */
@@ -380,48 +366,6 @@
             opacity: 0.9;
         }
 
-        /* GITHUB SETTINGS */
-        .github-section {
-            background: #f5f5f5;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-
-        .github-section h3 {
-            color: #333;
-            margin-bottom: 15px;
-        }
-
-        .github-status {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 15px;
-            font-size: 13px;
-        }
-
-        .status-indicator {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #d32f2f;
-        }
-
-        .status-indicator.connected {
-            background: #388e3c;
-        }
-
-        .info-box {
-            background: white;
-            padding: 15px;
-            border-radius: 6px;
-            border-left: 4px solid #667eea;
-            margin-bottom: 15px;
-            font-size: 13px;
-            color: #555;
-        }
-
         @media (max-width: 768px) {
             .admin-header {
                 flex-direction: column;
@@ -432,15 +376,22 @@
             .tab-btn {
                 min-width: 100px;
                 padding: 10px;
-                font-size: 12px;
+                font-size: 11px;
             }
 
             .tab-content {
                 padding: 20px;
             }
 
-            .btn-group {
+            .diagnostic-item {
                 flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .diagnostic-status {
+                width: 100%;
+                justify-content: space-between;
             }
         }
     </style>
@@ -452,7 +403,6 @@
         <p>Введите пароль для входа</p>
         
         <div class="error-message" id="errorMessage"></div>
-        <div class="success-message" id="successMessage"></div>
         
         <form id="loginForm" onsubmit="handleLogin(event)">
             <div class="form-group">
@@ -471,7 +421,7 @@
     <div class="admin-panel" id="adminPanel">
         <div class="admin-header">
             <div>
-                <h1>📰 TechFlow Admin Panel v2.0</h1>
+                <h1>📰 TechFlow Admin Panel v2.2</h1>
             </div>
             <button class="logout-btn" onclick="handleLogout()">Выход</button>
         </div>
@@ -481,16 +431,17 @@
             <button class="tab-btn" onclick="switchTab('manage-news', event)">✏️ Управление</button>
             <button class="tab-btn" onclick="switchTab('templates', event)">📋 Шаблоны</button>
             <button class="tab-btn" onclick="switchTab('settings', event)">⚙️ Настройки</button>
+            <button class="tab-btn" onclick="switchTab('diagnostics', event)">🔧 Диагностика</button>
         </div>
 
         <!-- TAB 1: ДОБАВИТЬ НОВОСТЬ -->
         <div class="tab-content active" id="tab-add-news">
-            <div class="success-message" id="successMessage2"></div>
+            <div id="successMessage2" style="background: #e8f5e9; color: #2e7d32; padding: 15px; border-radius: 6px; margin-bottom: 20px; display: none;"></div>
 
-            <div class="github-section">
+            <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
                 <h3>📡 Синхронизация с GitHub</h3>
-                <div class="github-status">
-                    <div class="status-indicator" id="statusIndicator"></div>
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px; font-size: 13px;">
+                    <div id="statusIndicator" style="width: 12px; height: 12px; border-radius: 50%; background: #d32f2f;"></div>
                     <span id="statusText">Проверка подключения...</span>
                 </div>
                 <div class="info-box">
@@ -499,18 +450,18 @@
             </div>
 
             <form id="addNewsForm" onsubmit="handleAddNews(event)">
-                <div class="form-section">
-                    <h3>Основная информация</h3>
+                <div style="margin-bottom: 20px;">
+                    <h3 style="color: #333; margin-bottom: 15px;">Основная информация</h3>
                     
                     <div class="form-group">
                         <label for="newsTitle">Заголовок *</label>
                         <input type="text" id="newsTitle" placeholder="Введите заголовок новости" required maxlength="200">
-                        <div class="char-count"><span id="titleCount">0</span>/200</div>
+                        <div style="font-size: 12px; color: #999; margin-top: 4px;"><span id="titleCount">0</span>/200</div>
                     </div>
 
                     <div class="form-group">
                         <label for="newsCategory">Категория *</label>
-                        <select id="newsCategory" required>
+                        <select id="newsCategory" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
                             <option value="">Выберите категорию</option>
                             <option value="ai">🤖 ИИ и Machine Learning</option>
                             <option value="gadgets">📱 Гаджеты и смартфоны</option>
@@ -526,109 +477,114 @@
                     </div>
                 </div>
 
-                <div class="form-section">
-                    <h3>Содержание</h3>
+                <div style="margin-bottom: 20px;">
+                    <h3 style="color: #333; margin-bottom: 15px;">Содержание</h3>
                     
                     <div class="form-group">
-                        <label for="newsExcerpt">Краткое описание (сокращённый вид) *</label>
-                        <textarea id="newsExcerpt" placeholder="Кратко опишите суть новости. Это видно на главной странице." required maxlength="300"></textarea>
-                        <div class="char-count"><span id="excerptCount">0</span>/300</div>
+                        <label for="newsExcerpt">Краткое описание *</label>
+                        <textarea id="newsExcerpt" placeholder="Кратко опишите суть новости." required maxlength="300" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; min-height: 100px;"></textarea>
+                        <div style="font-size: 12px; color: #999; margin-top: 4px;"><span id="excerptCount">0</span>/300</div>
                     </div>
 
                     <div class="form-group">
-                        <label for="newsFullText">Полный текст (модальное окно) *</label>
-                        <textarea id="newsFullText" placeholder="Полное содержание новости. Поддерживает **жирный** и *курсив*" required></textarea>
+                        <label for="newsFullText">Полный текст *</label>
+                        <textarea id="newsFullText" placeholder="Полное содержание новости." required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; min-height: 150px;"></textarea>
                     </div>
                 </div>
 
-                <div class="form-section">
-                    <h3>Мультимедиа и источники</h3>
+                <div style="margin-bottom: 20px;">
+                    <h3 style="color: #333; margin-bottom: 15px;">Мультимедиа и источники</h3>
                     
                     <div class="form-group">
                         <label for="newsImage">URL изображения *</label>
                         <input type="url" id="newsImage" placeholder="https://example.com/image.jpg" required onchange="updateImagePreview()">
-                        <img id="imagePreview" class="image-preview" alt="Превью изображения">
+                        <img id="imagePreview" style="margin-top: 10px; max-width: 200px; border-radius: 6px; display: none;" alt="Превью">
                     </div>
 
                     <div class="form-group">
-                        <label for="newsSource">Источник (ссылка на оригинал) *</label>
+                        <label for="newsSource">Источник *</label>
                         <input type="url" id="newsSource" placeholder="https://example.com/news" required>
                     </div>
                 </div>
 
-                <div class="form-section">
-                    <div class="checkbox-group">
-                        <input type="checkbox" id="newsFeatured">
-                        <label for="newsFeatured">✨ Это избранная новость (будет показана как главная на сайте)</label>
+                <div style="margin-bottom: 20px;">
+                    <div style="display: flex; align-items: center; margin: 15px 0;">
+                        <input type="checkbox" id="newsFeatured" style="margin-right: 10px;">
+                        <label for="newsFeatured">✨ Избранная новость</label>
                     </div>
                 </div>
 
                 <div class="btn-group">
-                    <button type="submit" class="btn btn-success">✅ Опубликовать новость</button>
-                    <button type="reset" class="btn btn-secondary">🔄 Очистить форму</button>
+                    <button type="submit" class="btn btn-success">✅ Опубликовать</button>
+                    <button type="reset" class="btn btn-secondary">🔄 Очистить</button>
                 </div>
             </form>
         </div>
 
-        <!-- TAB 2: УПРАВЛЕНИЕ НОВОСТЯМИ -->
+        <!-- TAB 2: УПРАВЛЕНИЕ -->
         <div class="tab-content" id="tab-manage-news">
-            <div class="search-box">
-                <input type="text" id="searchNews" placeholder="🔍 Поиск по названию..." onkeyup="filterNews()">
+            <div style="margin-bottom: 20px;">
+                <input type="text" id="searchNews" placeholder="🔍 Поиск по названию..." onkeyup="filterNews()" style="padding: 12px; border: 1px solid #ddd; border-radius: 6px; width: 100%; max-width: 300px;">
             </div>
-
-            <div class="news-list" id="newsList"></div>
+            <div id="newsList"></div>
         </div>
 
         <!-- TAB 3: ШАБЛОНЫ -->
         <div class="tab-content" id="tab-templates">
             <h2>Шаблоны новостей:</h2>
-            <p style="color: #666; margin-bottom: 20px;">Выберите шаблон, форма заполнится автоматически</p>
-            
-            <div id="templatesGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;"></div>
+            <div id="templatesGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px;"></div>
         </div>
 
         <!-- TAB 4: НАСТРОЙКИ -->
         <div class="tab-content" id="tab-settings">
-            <div class="github-section">
-                <h3>📡 GitHub API интеграция</h3>
-                
-                <div class="info-box">
-                    ℹ️ GitHub Token необходим для автоматического сохранения новостей в data/news.json.
+            <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                <h3>📡 GitHub API</h3>
+                <div class="info-box" style="margin-bottom: 20px;">
+                    ℹ️ GitHub Token необходим для автоматического сохранения новостей.
                 </div>
 
                 <div class="form-group" style="margin-bottom: 20px;">
-                    <label for="githubToken">GitHub Personal Access Token:</label>
+                    <label for="githubToken">GitHub Token:</label>
                     <input type="password" id="githubToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
-                    <div class="char-count">⚠️ Token сохраняется только в памяти браузера</div>
+                    <div style="font-size: 12px; color: #999; margin-top: 4px;">⚠️ Сохраняется только в памяти браузера</div>
                 </div>
 
                 <button class="btn btn-success" onclick="setGitHubToken()" style="max-width: 200px;">💾 Сохранить Token</button>
             </div>
 
-            <div style="margin: 30px 0; border-top: 1px solid #eee; padding-top: 30px;">
+            <div style="margin-top: 30px; padding-top: 30px; border-top: 1px solid #eee;">
                 <h3>📊 Статистика</h3>
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-number" id="statsNews">0</div>
-                        <div class="stat-label">Всего новостей</div>
+                        <div class="stat-label">Новостей</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-number" id="statsComments">0</div>
                         <div class="stat-label">Комментариев</div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-number" id="statsFeatured">0</div>
-                        <div class="stat-label">Избранных новостей</div>
-                    </div>
                 </div>
             </div>
+        </div>
 
-            <div style="margin: 30px 0; border-top: 1px solid #eee; padding-top: 30px;">
-                <h3>📥 Экспорт данных</h3>
-                
+        <!-- TAB 5: ДИАГНОСТИКА -->
+        <div class="tab-content" id="tab-diagnostics">
+            <h2 style="margin-bottom: 20px;">🔧 Диагностика системы</h2>
+
+            <div style="margin-bottom: 30px;">
+                <h3 style="margin-bottom: 15px;">📋 Результаты проверки:</h3>
+                <div id="diagnosticsList"></div>
+            </div>
+
+            <div style="margin-bottom: 30px;">
+                <h3 style="margin-bottom: 15px;">🐛 Логи ошибок:</h3>
+                <div class="error-log" id="errorLog">
+                    <div class="error-log-empty">Ошибок не обнаружено</div>
+                </div>
                 <div class="btn-group">
-                    <button class="btn btn-success" onclick="exportJSON()">📄 Экспортировать JSON</button>
-                    <button class="btn btn-success" onclick="exportCSV()">📊 Экспортировать CSV</button>
+                    <button class="btn btn-success btn-small" onclick="runDiagnostics()">🔄 Перезапустить диагностику</button>
+                    <button class="btn btn-danger btn-small" onclick="clearErrorLog()">🗑️ Очистить логи</button>
+                    <button class="btn btn-secondary btn-small" onclick="downloadErrorLog()">📥 Скачать логи</button>
                 </div>
             </div>
         </div>
@@ -636,48 +592,287 @@
 
     <script>
         // ===== ПЕРЕМЕННЫЕ =====
-        const ADMIN_PASSWORD = 'admin123'; // Простой пароль для проверки
+        const ADMIN_PASSWORD = 'admin123';
         let allNews = [];
         let allComments = {};
         let templates = [];
         let githubToken = null;
-        let githubUsername = null;
-        let githubRepo = null;
+        let errorLog = [];
+        let diagnosticResults = [];
 
-        // ===== ИНИЦИАЛИЗАЦИЯ =====
+        // Перехватываем ошибки консоли
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        const originalLog = console.log;
+
+        console.error = function(...args) {
+            logError('ERROR', args.join(' '));
+            originalError.apply(console, args);
+        };
+
+        console.warn = function(...args) {
+            logError('WARNING', args.join(' '));
+            originalWarn.apply(console, args);
+        };
+
+        // Перехватываем JS ошибки
+        window.addEventListener('error', (event) => {
+            logError('JS_ERROR', `${event.filename}:${event.lineno} - ${event.message}`);
+        });
+
+        // ===== ЛОГИРОВАНИЕ ОШИБОК =====
+        function logError(type, message) {
+            const timestamp = new Date().toLocaleTimeString();
+            errorLog.push({
+                time: timestamp,
+                type: type,
+                message: message
+            });
+
+            // Обновляем UI если видна вкладка диагностики
+            const errorLogDiv = document.getElementById('errorLog');
+            if (errorLogDiv) {
+                updateErrorLogUI();
+            }
+
+            // Храним максимум 100 ошибок
+            if (errorLog.length > 100) {
+                errorLog.shift();
+            }
+        }
+
+        function updateErrorLogUI() {
+            const errorLogDiv = document.getElementById('errorLog');
+            
+            if (errorLog.length === 0) {
+                errorLogDiv.innerHTML = '<div class="error-log-empty">Ошибок не обнаружено ✅</div>';
+                return;
+            }
+
+            errorLogDiv.innerHTML = errorLog.map((error, index) => `
+                <div class="error-log-item">
+                    <span class="error-log-time">[${error.time}]</span>
+                    <span class="error-log-type">${error.type}</span>
+                    <span class="error-log-message">: ${error.message}</span>
+                </div>
+            `).join('');
+
+            // Скролим вниз
+            errorLogDiv.scrollTop = errorLogDiv.scrollHeight;
+        }
+
+        function clearErrorLog() {
+            if (confirm('Вы уверены, что хотите очистить логи ошибок?')) {
+                errorLog = [];
+                updateErrorLogUI();
+            }
+        }
+
+        function downloadErrorLog() {
+            const logContent = errorLog.map(e => `[${e.time}] ${e.type}: ${e.message}`).join('\n');
+            const blob = new Blob([logContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `techflow-errors-${new Date().toISOString().split('T')[0]}.log`;
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // ===== ДИАГНОСТИКА =====
+        async function runDiagnostics() {
+            diagnosticResults = [];
+            
+            // Проверка 1: Файлы
+            await checkFile('data/news.json', 'JSON файл новостей');
+            await checkFile('data/comments.json', 'JSON файл комментариев');
+            await checkFile('data/template.json', 'JSON файл шаблонов');
+            await checkFile('assets/css/style.css', 'CSS стили');
+            await checkFile('assets/js/app.js', 'JS приложение');
+            await checkFile('index.html', 'Главная страница');
+            
+            // Проверка 2: Браузер
+            checkBrowser();
+            
+            // Проверка 3: GitHub
+            await checkGitHub();
+            
+            // Проверка 4: Память
+            checkMemory();
+            
+            // Обновляем UI
+            updateDiagnosticsUI();
+        }
+
+        async function checkFile(path, name) {
+            try {
+                const response = await fetch(path);
+                const ok = response.ok;
+                
+                diagnosticResults.push({
+                    name: name,
+                    path: path,
+                    status: ok ? 'success' : 'error',
+                    message: ok ? `Файл загружен (${response.headers.get('content-length') || '?'} байт)` : `Ошибка ${response.status}`,
+                    time: new Date().toLocaleTimeString()
+                });
+            } catch (error) {
+                logError('DIAGNOSTIC', `Ошибка при проверке ${name}: ${error.message}`);
+                diagnosticResults.push({
+                    name: name,
+                    path: path,
+                    status: 'error',
+                    message: error.message,
+                    time: new Date().toLocaleTimeString()
+                });
+            }
+        }
+
+        function checkBrowser() {
+            const browserInfo = {
+                name: '🌐 Информация о браузере',
+                status: 'success',
+                message: `${navigator.userAgent.substring(0, 50)}...`,
+                time: new Date().toLocaleTimeString()
+            };
+
+            const storageTest = {
+                name: '💾 Локальное хранилище',
+                status: checkLocalStorage() ? 'success' : 'warning',
+                message: checkLocalStorage() ? 'Доступно' : 'Недоступно (используется памятьбраузера)',
+                time: new Date().toLocaleTimeString()
+            };
+
+            diagnosticResults.push(browserInfo);
+            diagnosticResults.push(storageTest);
+        }
+
+        function checkLocalStorage() {
+            try {
+                const test = '__storage_test__';
+                localStorage.setItem(test, test);
+                localStorage.removeItem(test);
+                return true;
+            } catch (e) {
+                return false;
+            }
+        }
+
+        async function checkGitHub() {
+            if (!githubToken) {
+                diagnosticResults.push({
+                    name: '🔌 GitHub подключение',
+                    status: 'warning',
+                    message: 'Токен не установлен',
+                    time: new Date().toLocaleTimeString()
+                });
+                return;
+            }
+
+            try {
+                const urlParts = window.location.pathname.split('/');
+                const username = urlParts[1];
+                const repo = urlParts[2] || 'techflow-news';
+
+                const response = await fetch(`https://api.github.com/repos/${username}/${repo}`, {
+                    headers: {
+                        'Authorization': `token ${githubToken}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+
+                if (response.ok) {
+                    diagnosticResults.push({
+                        name: '🔌 GitHub подключение',
+                        status: 'success',
+                        message: `Подключено к ${username}/${repo}`,
+                        time: new Date().toLocaleTimeString()
+                    });
+                } else {
+                    diagnosticResults.push({
+                        name: '🔌 GitHub подключение',
+                        status: 'error',
+                        message: `Ошибка ${response.status}: Неверный токен или репозиторий`,
+                        time: new Date().toLocaleTimeString()
+                    });
+                }
+            } catch (error) {
+                logError('DIAGNOSTIC', `Ошибка при проверке GitHub: ${error.message}`);
+                diagnosticResults.push({
+                    name: '🔌 GitHub подключение',
+                    status: 'error',
+                    message: error.message,
+                    time: new Date().toLocaleTimeString()
+                });
+            }
+        }
+
+        function checkMemory() {
+            const memInfo = {
+                name: '⚡ Данные в памяти',
+                status: 'success',
+                message: `${allNews.length} новостей, ${Object.keys(allComments).length} потоков комментариев`,
+                time: new Date().toLocaleTimeString()
+            };
+
+            diagnosticResults.push(memInfo);
+        }
+
+        function updateDiagnosticsUI() {
+            const diagnosticsDiv = document.getElementById('diagnosticsList');
+
+            diagnosticsDiv.innerHTML = diagnosticResults.map(result => {
+                const iconClass = result.status === 'success' ? 'ok' : (result.status === 'error' ? 'error' : 'warning');
+                const icon = result.status === 'success' ? '✅' : (result.status === 'error' ? '❌' : '⚠️');
+
+                return `
+                    <div class="diagnostic-item ${result.status}">
+                        <div>
+                            <div class="diagnostic-name">${result.name}</div>
+                            <div style="color: #666; font-size: 12px; margin-top: 4px;">${result.message}</div>
+                        </div>
+                        <div class="diagnostic-status">
+                            <span style="color: #999; font-size: 11px;">${result.time}</span>
+                            <div class="diagnostic-icon ${iconClass}">${icon}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ===== ОСНОВНЫЕ ФУНКЦИИ =====
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('Admin Panel Initialized');
+            console.log('Admin Panel Initialized v2.2');
             loadNews();
             loadComments();
             loadTemplates();
             setupCharCounters();
         });
 
-        // ===== АУТЕНТИФИКАЦИЯ =====
         function handleLogin(event) {
             event.preventDefault();
             const password = document.getElementById('password').value;
 
-            console.log('Login attempt with password:', password);
-            console.log('Expected password:', ADMIN_PASSWORD);
+            console.log('Login attempt');
 
             if (password === ADMIN_PASSWORD) {
-                console.log('✅ Login successful!');
+                console.log('✅ Login successful');
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('adminPanel').style.display = 'block';
-                showSuccess('Добро пожаловать в админ панель!');
                 document.getElementById('password').value = '';
                 updateUI();
             } else {
-                console.log('❌ Login failed - wrong password');
-                showError('❌ Неверный пароль! Попробуйте "admin123"');
+                console.log('❌ Login failed');
+                document.getElementById('errorMessage').textContent = '❌ Неверный пароль!';
+                document.getElementById('errorMessage').style.display = 'block';
                 document.getElementById('password').value = '';
                 document.getElementById('password').focus();
+                logError('LOGIN', 'Попытка входа с неверным паролем');
             }
         }
 
         function handleLogout() {
-            if (confirm('Вы уверены, что хотите выйти?')) {
+            if (confirm('Выйти из админ панели?')) {
                 document.getElementById('loginScreen').style.display = 'block';
                 document.getElementById('adminPanel').style.display = 'none';
                 document.getElementById('password').value = '';
@@ -686,37 +881,17 @@
             }
         }
 
-        function showError(message) {
-            const errorDiv = document.getElementById('errorMessage');
-            errorDiv.textContent = message;
-            errorDiv.style.display = 'block';
-            setTimeout(() => {
-                errorDiv.style.display = 'none';
-            }, 5000);
-        }
-
-        function showSuccess(message) {
-            const successDiv = document.getElementById('successMessage2');
-            if (!successDiv) return;
-            successDiv.textContent = message;
-            successDiv.style.display = 'block';
-            setTimeout(() => {
-                successDiv.style.display = 'none';
-            }, 4000);
-        }
-
-        // ===== РАБОТА С НОВОСТЯМИ =====
         async function loadNews() {
             try {
                 const response = await fetch('data/news.json');
                 if (response.ok) {
                     allNews = await response.json();
-                    console.log('News loaded:', allNews.length, 'items');
+                    console.log('News loaded:', allNews.length);
                 } else {
                     allNews = [];
                 }
             } catch (error) {
-                console.error('Error loading news:', error);
+                logError('LOAD_NEWS', error.message);
                 allNews = [];
             }
         }
@@ -730,7 +905,7 @@
                     allComments = {};
                 }
             } catch (error) {
-                console.error('Error loading comments:', error);
+                logError('LOAD_COMMENTS', error.message);
                 allComments = {};
             }
         }
@@ -743,7 +918,7 @@
                     renderTemplates();
                 }
             } catch (error) {
-                console.error('Error loading templates:', error);
+                logError('LOAD_TEMPLATES', error.message);
             }
         }
 
@@ -764,22 +939,24 @@
                 views: 0
             };
 
-            console.log('Adding news:', newsData);
+            console.log('Adding news:', newsData.title);
 
-            if (!newsData.title || !newsData.category || !newsData.excerpt || !newsData.fullText || !newsData.image || !newsData.source || !newsData.author) {
-                showError('Пожалуйста, заполните все обязательные поля!');
+            if (!newsData.title || !newsData.category || !newsData.excerpt || !newsData.fullText) {
+                logError('ADD_NEWS', 'Не все поля заполнены');
+                alert('Заполните все обязательные поля!');
                 return;
             }
 
             allNews.push(newsData);
 
-            // Пытаемся сохранить в GitHub
-            if (githubToken && githubUsername && githubRepo) {
+            if (githubToken) {
                 const success = await saveNewsToGitHub();
                 if (success) {
                     showSuccess('✅ Новость опубликована и сохранена на GitHub!');
+                    console.log('News saved to GitHub successfully');
                 } else {
-                    showSuccess('⚠️ Новость добавлена, но не сохранена на GitHub. Проверьте token.');
+                    showSuccess('⚠️ Новость добавлена, но не сохранена на GitHub');
+                    logError('GITHUB_SAVE', 'Не удалось сохранить на GitHub');
                 }
             } else {
                 showSuccess('✅ Новость добавлена!');
@@ -792,8 +969,11 @@
 
         async function saveNewsToGitHub() {
             try {
-                // Получаем текущий файл
-                const fileResponse = await fetch(`https://api.github.com/repos/${githubUsername}/${githubRepo}/contents/data/news.json`, {
+                const urlParts = window.location.pathname.split('/');
+                const username = urlParts[1];
+                const repo = urlParts[2] || 'techflow-news';
+
+                const fileResponse = await fetch(`https://api.github.com/repos/${username}/${repo}/contents/data/news.json`, {
                     headers: {
                         'Authorization': `token ${githubToken}`,
                         'Accept': 'application/vnd.github.v3+json'
@@ -806,12 +986,10 @@
                     sha = fileData.sha;
                 }
 
-                // Кодируем новости в base64
                 const newsContent = JSON.stringify(allNews, null, 2);
                 const encodedContent = btoa(unescape(encodeURIComponent(newsContent)));
 
-                // Отправляем обновление
-                const updateResponse = await fetch(`https://api.github.com/repos/${githubUsername}/${githubRepo}/contents/data/news.json`, {
+                const updateResponse = await fetch(`https://api.github.com/repos/${username}/${repo}/contents/data/news.json`, {
                     method: 'PUT',
                     headers: {
                         'Authorization': `token ${githubToken}`,
@@ -825,10 +1003,9 @@
                     })
                 });
 
-                console.log('GitHub save response:', updateResponse.status);
                 return updateResponse.ok;
             } catch (error) {
-                console.error('GitHub save error:', error);
+                logError('GITHUB_API', error.message);
                 return false;
             }
         }
@@ -842,6 +1019,7 @@
                 preview.style.display = 'block';
                 preview.onerror = () => {
                     preview.style.display = 'none';
+                    logError('IMAGE_LOAD', `Не удалось загрузить изображение: ${imageUrl}`);
                 };
             } else {
                 preview.style.display = 'none';
@@ -859,11 +1037,11 @@
         }
 
         function deleteNews(id) {
-            if (confirm('Вы уверены?')) {
+            if (confirm('Удалить новость?')) {
                 allNews = allNews.filter(news => news.id !== id);
+                console.log('News deleted:', id);
                 saveNewsToGitHub();
                 updateUI();
-                showSuccess('Новость удалена');
             }
         }
 
@@ -887,15 +1065,12 @@
                 
                 allNews = allNews.filter(n => n.id !== id);
                 updateUI();
-                showSuccess('Новость загружена для редактирования');
             }
         }
 
         function filterNews() {
             const searchTerm = document.getElementById('searchNews').value.toLowerCase();
-            const filtered = allNews.filter(news => 
-                news.title.toLowerCase().includes(searchTerm)
-            );
+            const filtered = allNews.filter(news => news.title.toLowerCase().includes(searchTerm));
             renderNewsList(filtered);
         }
 
@@ -910,14 +1085,14 @@
             newsListDiv.innerHTML = newsList.map(news => {
                 const commentsCount = (allComments[news.id] || []).length;
                 return `
-                    <div class="news-item">
-                        <div class="news-item-title">${news.title}</div>
-                        <div class="news-item-meta">
-                            <span>📅 ${news.date}</span>
-                            <span>👤 ${news.author}</span>
+                    <div style="border: 1px solid #eee; padding: 15px; border-radius: 6px; margin-bottom: 12px; background: #f9f9f9;">
+                        <div style="font-weight: 600; color: #333; margin-bottom: 8px;">${news.title}</div>
+                        <div style="font-size: 12px; color: #999; margin-bottom: 10px;">
+                            <span style="margin-right: 15px;">📅 ${news.date}</span>
+                            <span style="margin-right: 15px;">👤 ${news.author}</span>
                             <span>💬 ${commentsCount}</span>
                         </div>
-                        <div class="news-item-actions">
+                        <div style="display: flex; gap: 8px;">
                             <button class="btn btn-success btn-small" onclick="editNews('${news.id}')">✏️ Редактировать</button>
                             <button class="btn btn-danger btn-small" onclick="deleteNews('${news.id}')">🗑️ Удалить</button>
                         </div>
@@ -959,94 +1134,41 @@
 
                 updateImagePreview();
                 switchTab('add-news', null);
-                showSuccess('Шаблон применен!');
+                console.log('Template applied:', template.name);
             }
         }
 
-        // ===== НАСТРОЙКИ =====
         function setGitHubToken() {
             const token = document.getElementById('githubToken').value.trim();
             
             if (!token) {
-                showError('Введите GitHub Token');
+                logError('TOKEN', 'Токен не введен');
+                alert('Введите GitHub Token');
                 return;
             }
 
-            // Парсим username и repo
             const urlParts = window.location.pathname.split('/');
-            githubUsername = urlParts[1]; // часть после github.io
-            githubRepo = urlParts[2] || 'techflow-news'; // techflow-news или другое имя
-
             githubToken = token;
             
-            console.log('GitHub Token set:', {githubUsername, githubRepo});
-            verifyGitHubToken();
-            showSuccess('✅ GitHub Token сохранен!');
-        }
-
-        async function verifyGitHubToken() {
-            if (!githubToken || !githubUsername || !githubRepo) return;
-
-            try {
-                const response = await fetch(`https://api.github.com/repos/${githubUsername}/${githubRepo}`, {
-                    headers: {
-                        'Authorization': `token ${githubToken}`,
-                        'Accept': 'application/vnd.github.v3+json'
-                    }
-                });
-
-                const indicator = document.getElementById('statusIndicator');
-                const statusText = document.getElementById('statusText');
-
-                if (response.ok) {
-                    indicator.classList.add('connected');
-                    statusText.textContent = '✅ Подключено к GitHub';
-                    console.log('✅ GitHub connection verified');
-                } else {
-                    indicator.classList.remove('connected');
-                    statusText.textContent = '❌ Ошибка подключения';
-                    githubToken = null;
-                    console.log('❌ GitHub connection failed');
-                }
-            } catch (error) {
-                console.error('GitHub verification error:', error);
-                document.getElementById('statusIndicator').classList.remove('connected');
-                document.getElementById('statusText').textContent = '❌ Ошибка подключения';
-            }
-        }
-
-        // ===== ЭКСПОРТ =====
-        function exportJSON() {
-            const dataStr = JSON.stringify(allNews, null, 2);
-            downloadFile(dataStr, 'news.json', 'application/json');
-        }
-
-        function exportCSV() {
-            let csv = 'ID,Заголовок,Категория,Дата,Автор\n';
+            console.log('GitHub Token set');
             
-            allNews.forEach(news => {
-                const title = `"${news.title.replace(/"/g, '""')}"`;
-                csv += `${news.id},${title},${news.category},${news.date},${news.author}\n`;
-            });
-
-            downloadFile(csv, 'news.csv', 'text/csv');
+            document.getElementById('statusIndicator').classList.add('connected');
+            document.getElementById('statusText').textContent = '✅ Подключено к GitHub';
+            alert('✅ GitHub Token сохранен!');
         }
 
-        function downloadFile(content, filename, type) {
-            const blob = new Blob([content], { type: type });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = filename;
-            link.click();
-            URL.revokeObjectURL(url);
+        function showSuccess(message) {
+            const successDiv = document.getElementById('successMessage2');
+            if (!successDiv) return;
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            setTimeout(() => {
+                successDiv.style.display = 'none';
+            }, 4000);
         }
 
-        // ===== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =====
         function switchTab(tabName, event) {
-            if (event) {
-                event.preventDefault();
-            }
+            if (event) event.preventDefault();
 
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
@@ -1057,13 +1179,17 @@
 
             document.getElementById('tab-' + tabName).classList.add('active');
             
-            // Найдите и активируйте соответствующую кнопку вкладки
             const buttons = document.querySelectorAll('.tab-btn');
             buttons.forEach(btn => {
                 if (btn.textContent.includes(getTabLabel(tabName))) {
                     btn.classList.add('active');
                 }
             });
+
+            // Запускаем диагностику при открытии вкладки
+            if (tabName === 'diagnostics') {
+                setTimeout(() => runDiagnostics(), 100);
+            }
         }
 
         function getTabLabel(tabName) {
@@ -1071,7 +1197,8 @@
                 'add-news': 'Добавить',
                 'manage-news': 'Управление',
                 'templates': 'Шаблоны',
-                'settings': 'Настройки'
+                'settings': 'Настройки',
+                'diagnostics': 'Диагностика'
             };
             return labels[tabName] || '';
         }
@@ -1080,7 +1207,6 @@
             renderNewsList();
             
             document.getElementById('statsNews').textContent = allNews.length;
-            document.getElementById('statsFeatured').textContent = allNews.filter(n => n.featured).length;
             
             let totalComments = 0;
             for (let key in allComments) {
@@ -1089,7 +1215,8 @@
             document.getElementById('statsComments').textContent = totalComments;
 
             if (githubToken) {
-                verifyGitHubToken();
+                document.getElementById('statusIndicator').classList.add('connected');
+                document.getElementById('statusText').textContent = '✅ Подключено к GitHub';
             }
         }
     </script>
