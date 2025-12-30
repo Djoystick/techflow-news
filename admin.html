@@ -529,7 +529,7 @@
                     <label>Текст комментария *</label>
                     <textarea id="commentText" placeholder="Ваш комментарий..."></textarea>
                 </div>
-                <button class="btn btn-primary btn-full" onclick="addComment()">💬 Добавить</button>
+                <button class="btn btn-primary btn-full" id="addCommentBtn">💬 Добавить</button>
             </div>
 
             <h3>📂 Существующие комментарии</h3>
@@ -560,7 +560,7 @@
                         <input type="text" id="catColor" placeholder="#FF6B6B">
                     </div>
                 </div>
-                <button class="btn btn-primary btn-full" onclick="addCategory()">➕ Добавить</button>
+                <button class="btn btn-primary btn-full" id="addCategoryBtn">➕ Добавить</button>
             </div>
 
             <h3>📂 Существующие категории</h3>
@@ -585,7 +585,7 @@
                     <label>Содержимое *</label>
                     <textarea id="tplContent" placeholder="Шаблон текста..."></textarea>
                 </div>
-                <button class="btn btn-primary btn-full" onclick="addTemplate()">➕ Создать</button>
+                <button class="btn btn-primary btn-full" id="addTemplateBtn">➕ Создать</button>
             </div>
 
             <h3>📂 Существующие шаблоны</h3>
@@ -611,7 +611,7 @@
                     <label>Имя репозитория *</label>
                     <input type="text" id="githubRepo" placeholder="techflow-news">
                 </div>
-                <button class="btn btn-success btn-full" onclick="saveSettings()">💾 Сохранить</button>
+                <button class="btn btn-success btn-full" id="saveSettingsBtn">💾 Сохранить</button>
             </div>
 
             <div class="card">
@@ -625,7 +625,7 @@
 
             <div class="card">
                 <h3>🔄 Синхронизация</h3>
-                <button class="btn btn-info btn-full" onclick="manualSync()">🔄 Синхронизировать</button>
+                <button class="btn btn-info btn-full" id="manualSyncBtn">🔄 Синхронизировать</button>
                 <p style="margin-top: 10px; font-size: 0.9em; color: var(--color-text-secondary);">
                     Все данные синхронизируются каждые 5 минут.
                 </p>
@@ -635,7 +635,7 @@
         <!-- 🔧 ДИАГНОСТИКА -->
         <div id="diagnostics" class="tab-content">
             <h2>🔧 Расширенная диагностика</h2>
-            <button class="btn btn-primary" onclick="runDiagnostics()">🔄 Запустить диагностику</button>
+            <button class="btn btn-primary" id="runDiagnosticsBtn">🔄 Запустить диагностику</button>
             <div id="diagnosticsResults" style="margin-top: 20px;"></div>
         </div>
 
@@ -643,8 +643,8 @@
         <div id="logs" class="tab-content">
             <h2>📝 Логирование событий</h2>
             <div style="margin-bottom: 20px;">
-                <button class="btn btn-warning" onclick="clearLogs()">🗑️ Очистить</button>
-                <button class="btn btn-info" onclick="exportLogs()">📥 Экспорт</button>
+                <button class="btn btn-warning" id="clearLogsBtn">🗑️ Очистить</button>
+                <button class="btn btn-info" id="exportLogsBtn">📥 Экспорт</button>
             </div>
             <div class="log-container" id="logsContainer"></div>
         </div>
@@ -845,7 +845,7 @@
             }
         };
 
-        // ============== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК (ИСПРАВЛЕНО!) ==============
+        // ============== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ==============
         function switchTab(tabName) {
             // Скрыть все вкладки
             document.querySelectorAll('.tab-content').forEach(tab => {
@@ -864,7 +864,10 @@
             }
 
             // Активировать соответствующую кнопку
-            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+            const activeBtn = document.querySelector(`[data-tab="${tabName}"]`);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+            }
 
             // Если это вкладка логов, обновить вывод
             if (tabName === 'logs') {
@@ -874,16 +877,53 @@
             Logger.info(`Переключение на вкладку: ${tabName}`);
         }
 
-        // ============== ОБРАБОТЧИКИ СОБЫТИЙ ДЛЯ ВКЛАДОК ==============
-        document.addEventListener('DOMContentLoaded', function() {
-            // Добавить обработчики клика на кнопки вкладок
+        // ============== РЕГИСТРАЦИЯ ВСЕХ ОБРАБОТЧИКОВ ==============
+        function registerEventListeners() {
+            // Вкладки
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const tabName = this.getAttribute('data-tab');
                     switchTab(tabName);
                 });
             });
-        });
+
+            // Новости
+            const addNewsBtn = document.getElementById('addNewsBtn');
+            if (addNewsBtn) addNewsBtn.addEventListener('click', addNews);
+
+            // Комментарии
+            const addCommentBtn = document.getElementById('addCommentBtn');
+            if (addCommentBtn) addCommentBtn.addEventListener('click', addComment);
+
+            // Категории
+            const addCategoryBtn = document.getElementById('addCategoryBtn');
+            if (addCategoryBtn) addCategoryBtn.addEventListener('click', addCategory);
+
+            // Шаблоны
+            const addTemplateBtn = document.getElementById('addTemplateBtn');
+            if (addTemplateBtn) addTemplateBtn.addEventListener('click', addTemplate);
+
+            // Настройки
+            const saveSettingsBtn = document.getElementById('saveSettingsBtn');
+            if (saveSettingsBtn) saveSettingsBtn.addEventListener('click', saveSettings);
+
+            // Синхронизация
+            const manualSyncBtn = document.getElementById('manualSyncBtn');
+            if (manualSyncBtn) manualSyncBtn.addEventListener('click', manualSync);
+
+            // Диагностика
+            const runDiagnosticsBtn = document.getElementById('runDiagnosticsBtn');
+            if (runDiagnosticsBtn) runDiagnosticsBtn.addEventListener('click', runDiagnostics);
+
+            // Логи
+            const clearLogsBtn = document.getElementById('clearLogsBtn');
+            if (clearLogsBtn) clearLogsBtn.addEventListener('click', clearLogs);
+
+            const exportLogsBtn = document.getElementById('exportLogsBtn');
+            if (exportLogsBtn) exportLogsBtn.addEventListener('click', exportLogs);
+
+            Logger.success('Все обработчики событий зарегистрированы');
+        }
 
         // ============== НОВОСТИ ==============
         function addNews() {
@@ -1289,14 +1329,6 @@
         }
 
         // ============== ОБРАБОТКА ИЗОБРАЖЕНИЙ ==============
-        document.addEventListener('DOMContentLoaded', function() {
-            const imageInput = document.getElementById('newsImage');
-            if (imageInput) {
-                imageInput.addEventListener('change', updateImagePreview);
-                imageInput.addEventListener('input', updateImagePreview);
-            }
-        });
-
         function updateImagePreview() {
             const url = document.getElementById('newsImage').value;
             const preview = document.getElementById('imagePreview');
@@ -1312,11 +1344,13 @@
 
         // ============== ИНИЦИАЛИЗАЦИЯ ==============
         function init() {
+            // Загрузить настройки
             const settings = DataManager.getSettings();
             if (settings.token) document.getElementById('githubToken').value = settings.token;
             if (settings.username) document.getElementById('githubUsername').value = settings.username;
             if (settings.repo) document.getElementById('githubRepo').value = settings.repo;
 
+            // Отобразить данные
             displayNews();
             displayComments();
             displayCategories();
@@ -1326,8 +1360,19 @@
             DataManager.updateStats();
             Logger.displayLogs();
 
+            // РЕГИСТРАЦИЯ ОБРАБОТЧИКОВ - ГЛАВНОЕ!
+            registerEventListeners();
+
+            // Обработка изображений
+            const imageInput = document.getElementById('newsImage');
+            if (imageInput) {
+                imageInput.addEventListener('change', updateImagePreview);
+                imageInput.addEventListener('input', updateImagePreview);
+            }
+
             Logger.info('✅ Админ панель v2.6 инициализирована успешно!');
 
+            // Автосинхронизация каждые 5 минут
             setInterval(() => {
                 const settings = DataManager.getSettings();
                 if (settings.token && settings.username && settings.repo) {
