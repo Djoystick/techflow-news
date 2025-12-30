@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 Тест Error Debug Overlay</title>
+    
+    <!-- ПОДКЛЮЧИТЬ ОБРАБОТЧИК ОШИБОК ПЕРВЫМ! -->
+    <script src="error-debug-v1.js" defer></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: #2196F3;
+            margin-bottom: 20px;
+        }
+
+        .test-section {
+            background: #1a1a1a;
+            border: 1px solid #404040;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .test-btn {
+            padding: 10px 20px;
+            margin: 5px;
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .test-btn:hover {
+            background: #1976D2;
+            transform: translateY(-2px);
+        }
+
+        .test-btn.error {
+            background: #f44336;
+        }
+
+        .test-btn.error:hover {
+            background: #da190b;
+        }
+
+        .test-btn.success {
+            background: #4CAF50;
+        }
+
+        .test-btn.success:hover {
+            background: #45a049;
+        }
+
+        code {
+            background: #0a0a0a;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #4CAF50;
+            font-family: 'Courier New', monospace;
+        }
+
+        .info {
+            background: rgba(33, 150, 243, 0.1);
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+
+        .debug-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: #f44336;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 999998;
+            box-shadow: 0 4px 12px rgba(244, 67, 54, 0.4);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .debug-button:hover {
+            background: #da190b;
+            transform: scale(1.1);
+        }
+
+        .output {
+            background: #0a0a0a;
+            border: 1px solid #404040;
+            border-radius: 4px;
+            padding: 10px;
+            margin-top: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #4CAF50;
+            min-height: 50px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 🔴 КНОПКА ОТЛАДКИ ОШИБОК -->
+    <button class="debug-button" onclick="window.errorDebug.showPanel()" title="Показать ошибки">🔴</button>
+
+    <div class="container">
+        <h1>🧪 Тестирование Error Debug Overlay</h1>
+
+        <div class="info">
+            <strong>ℹ️ Инструкция:</strong><br>
+            1. Нажимайте кнопки ниже, чтобы вызвать разные типы ошибок<br>
+            2. Красная кнопка 🔴 в правом верхнем углу покажет все ошибки<br>
+            3. Ошибки также сохраняются в localStorage
+        </div>
+
+        <!-- ТЕСТ 1: JavaScript ошибки -->
+        <div class="test-section">
+            <h2>Test 1: JavaScript ошибки</h2>
+            <p>Эти тесты вызовут JavaScript ошибки, которые будут перехвачены обработчиком.</p>
+            
+            <button class="test-btn error" onclick="testJSError()">❌ Вызвать JS Error</button>
+            <button class="test-btn error" onclick="testTypeError()">❌ TypeError</button>
+            <button class="test-btn error" onclick="testReferenceError()">❌ ReferenceError</button>
+            <button class="test-btn error" onclick="testUndefinedAccess()">❌ Access undefined</button>
+            
+            <div class="output" id="test1-output">Ожидание теста...</div>
+        </div>
+
+        <!-- ТЕСТ 2: console.error -->
+        <div class="test-section">
+            <h2>Test 2: console.error</h2>
+            <p>Эти тесты используют <code>console.error()</code>, который перехватывается отдельно.</p>
+            
+            <button class="test-btn error" onclick="testConsoleError()">❌ console.error()</button>
+            <button class="test-btn error" onclick="testConsoleErrorObject()">❌ console.error(object)</button>
+            
+            <div class="output" id="test2-output">Ожидание теста...</div>
+        </div>
+
+        <!-- ТЕСТ 3: Promise rejection -->
+        <div class="test-section">
+            <h2>Test 3: Promise rejection</h2>
+            <p>Эти тесты вызывают необработанный отказ Promise.</p>
+            
+            <button class="test-btn error" onclick="testPromiseRejection()">❌ Promise rejection</button>
+            <button class="test-btn error" onclick="testAsyncError()">❌ Async/Await error</button>
+            
+            <div class="output" id="test3-output">Ожидание теста...</div>
+        </div>
+
+        <!-- ТЕСТ 4: Управление ошибками -->
+        <div class="test-section">
+            <h2>Test 4: Управление ошибками</h2>
+            
+            <button class="test-btn" onclick="window.errorDebug.showPanel()">🔴 Показать панель ошибок</button>
+            <button class="test-btn" onclick="viewStoredErrors()">📊 Просмотреть сохраненные ошибки</button>
+            <button class="test-btn success" onclick="window.errorDebug.exportErrors()">📥 Экспортировать</button>
+            <button class="test-btn error" onclick="window.errorDebug.clearErrors()">🗑️ Очистить</button>
+            
+            <div class="output" id="test4-output">Нет ошибок</div>
+        </div>
+
+        <!-- ТЕСТ 5: Логирование -->
+        <div class="test-section">
+            <h2>Test 5: Логирование через errorDebug</h2>
+            
+            <button class="test-btn" onclick="testDebugLog()">📝 Log переменной</button>
+            <button class="test-btn" onclick="testDebugLogComplex()">📝 Log сложного объекта</button>
+            
+            <div class="output" id="test5-output">Ожидание теста...</div>
+        </div>
+
+        <!-- ИНФОРМАЦИЯ -->
+        <div class="info" style="margin-top: 40px;">
+            <strong>✅ Все функции:</strong><br>
+            <code>window.errorDebug.showPanel()</code> - Показать панель<br>
+            <code>window.errorDebug.getErrors()</code> - Получить все ошибки<br>
+            <code>window.errorDebug.clearErrors()</code> - Очистить ошибки<br>
+            <code>window.errorDebug.exportErrors()</code> - Экспортировать в файл<br>
+            <code>window.errorDebug.log(name, value)</code> - Залогировать значение<br>
+        </div>
+    </div>
+
+    <script>
+        // ТЕСТЫ
+
+        function testJSError() {
+            const output = document.getElementById('test1-output');
+            try {
+                // Намеренно вызываем ошибку
+                const result = undefined.property;
+                output.textContent = '✅ Тест отправлен';
+            } catch (e) {
+                output.textContent = '❌ ' + e.message;
+            }
+        }
+
+        function testTypeError() {
+            const output = document.getElementById('test1-output');
+            try {
+                const x = null;
+                x.method();
+                output.textContent = '✅ Тест отправлен';
+            } catch (e) {
+                output.textContent = '❌ ' + e.message;
+            }
+        }
+
+        function testReferenceError() {
+            const output = document.getElementById('test1-output');
+            try {
+                console.log(nonExistentVariable);
+                output.textContent = '✅ Тест отправлен';
+            } catch (e) {
+                output.textContent = '❌ ' + e.message;
+            }
+        }
+
+        function testUndefinedAccess() {
+            const output = document.getElementById('test1-output');
+            try {
+                const obj = {};
+                obj.nested.property.value;
+                output.textContent = '✅ Тест отправлен';
+            } catch (e) {
+                output.textContent = '❌ ' + e.message;
+            }
+        }
+
+        function testConsoleError() {
+            const output = document.getElementById('test2-output');
+            console.error('🔴 Это тестовая ошибка в console.error()');
+            output.textContent = '✅ console.error() вызван';
+        }
+
+        function testConsoleErrorObject() {
+            const output = document.getElementById('test2-output');
+            console.error('Ошибка с объектом:', {
+                code: 500,
+                message: 'Internal Server Error',
+                timestamp: new Date().toISOString()
+            });
+            output.textContent = '✅ console.error(object) вызван';
+        }
+
+        function testPromiseRejection() {
+            const output = document.getElementById('test3-output');
+            Promise.reject(new Error('🔴 Необработанный Promise rejection'));
+            output.textContent = '✅ Promise rejection отправлен';
+            setTimeout(() => {
+                console.log('💡 Если видите ошибку в панели, это правильно');
+            }, 100);
+        }
+
+        function testAsyncError() {
+            const output = document.getElementById('test3-output');
+            
+            async function asyncTest() {
+                try {
+                    throw new Error('🔴 Ошибка в async функции');
+                } catch (e) {
+                    console.error(e);
+                }
+            }
+            
+            asyncTest();
+            output.textContent = '✅ Async error отправлен';
+        }
+
+        function viewStoredErrors() {
+            const output = document.getElementById('test4-output');
+            const errors = window.errorDebug.getErrors();
+            
+            if (errors.length === 0) {
+                output.textContent = '✅ Ошибок нет';
+                return;
+            }
+            
+            const summary = `📊 Всего ошибок: ${errors.length}\n\n`;
+            const list = errors.slice(-5).map((e, i) => 
+                `${i+1}. [${e.type}] ${e.message}`
+            ).join('\n');
+            
+            output.textContent = summary + 'Последние 5:\n' + list;
+        }
+
+        function testDebugLog() {
+            const output = document.getElementById('test5-output');
+            
+            const testVar = 'Hello, World!';
+            window.errorDebug.log('testVar', testVar);
+            
+            output.textContent = '✅ Залогирована переменная testVar';
+            console.log('💡 Проверьте консоль браузера (F12)');
+        }
+
+        function testDebugLogComplex() {
+            const output = document.getElementById('test5-output');
+            
+            const complexObj = {
+                name: 'Test Object',
+                count: 42,
+                nested: {
+                    value: 'Hello',
+                    array: [1, 2, 3]
+                }
+            };
+            
+            window.errorDebug.log('complexObj', complexObj);
+            
+            output.textContent = '✅ Залогирован сложный объект';
+            console.log('💡 Проверьте консоль браузера (F12)');
+        }
+
+        // ИНИЦИАЛИЗАЦИЯ
+        console.log('🧪 Тестовая страница загружена');
+        console.log('🔴 Нажмите красную кнопку 🔴 в правом углу, чтобы увидеть панель ошибок');
+    </script>
+</body>
+</html>
