@@ -547,7 +547,7 @@
         </div>
     </div>
 
-    <script>
+    <script defer>
         const CONFIG = {
             NEWS_KEY: 'news-data',
             COMMENTS_KEY: 'comments-data',
@@ -970,45 +970,27 @@
             }
         }
 
-        // РЕГИСТРАЦИЯ ОБРАБОТЧИКОВ - ГЛАВНОЕ ЧТОБЫ БЫЛО ПЕРВЫМ!
-        function attachEventListeners() {
-            // Вкладки
+        // ИНИЦИАЛИЗАЦИЯ
+        function init() {
+            // Регистрируем вкладки
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     switchTab(this.getAttribute('data-tab'));
                 });
             });
 
-            // Кнопки
-            const newsBtn = document.getElementById('addNewsBtn');
-            if (newsBtn) newsBtn.addEventListener('click', addNews);
-
-            const commentBtn = document.getElementById('addCommentBtn');
-            if (commentBtn) commentBtn.addEventListener('click', addComment);
-
-            const catBtn = document.getElementById('addCategoryBtn');
-            if (catBtn) catBtn.addEventListener('click', addCategory);
-
-            const tplBtn = document.getElementById('addTemplateBtn');
-            if (tplBtn) tplBtn.addEventListener('click', addTemplate);
-
-            const settingsBtn = document.getElementById('saveSettingsBtn');
-            if (settingsBtn) settingsBtn.addEventListener('click', saveSettings);
+            // Регистрируем кнопки
+            document.getElementById('addNewsBtn')?.addEventListener('click', addNews);
+            document.getElementById('addCommentBtn')?.addEventListener('click', addComment);
+            document.getElementById('addCategoryBtn')?.addEventListener('click', addCategory);
+            document.getElementById('addTemplateBtn')?.addEventListener('click', addTemplate);
+            document.getElementById('saveSettingsBtn')?.addEventListener('click', saveSettings);
 
             // Превью изображения
-            const imgInput = document.getElementById('newsImage');
-            if (imgInput) {
-                imgInput.addEventListener('change', updateImagePreview);
-                imgInput.addEventListener('input', updateImagePreview);
-            }
-        }
+            document.getElementById('newsImage')?.addEventListener('change', updateImagePreview);
+            document.getElementById('newsImage')?.addEventListener('input', updateImagePreview);
 
-        // ИНИЦИАЛИЗАЦИЯ
-        function init() {
-            // 1. Сначала регистрируем ВСЕ обработчики событий
-            attachEventListeners();
-
-            // 2. Потом загружаем данные
+            // Загружаем данные
             const settings = DataManager.getSettings();
             if (settings.token) document.getElementById('githubToken').value = settings.token;
             if (settings.username) document.getElementById('githubUsername').value = settings.username;
@@ -1023,11 +1005,8 @@
             DataManager.updateStats();
         }
 
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', init);
-        } else {
-            init();
-        }
+        // Запускаем при загрузке страницы
+        window.addEventListener('load', init);
     </script>
 </body>
 </html>
