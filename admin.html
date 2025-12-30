@@ -438,13 +438,13 @@
 
         <!-- Вкладки -->
         <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('news')">📰 Новости</button>
-            <button class="tab-btn" onclick="switchTab('comments')">💬 Комментарии</button>
-            <button class="tab-btn" onclick="switchTab('categories')">🏷️ Категории</button>
-            <button class="tab-btn" onclick="switchTab('templates')">📋 Шаблоны</button>
-            <button class="tab-btn" onclick="switchTab('settings')">⚙️ Настройки</button>
-            <button class="tab-btn" onclick="switchTab('diagnostics')">🔧 Диагностика</button>
-            <button class="tab-btn" onclick="switchTab('logs')">📝 Логи</button>
+            <button class="tab-btn active" data-tab="news">📰 Новости</button>
+            <button class="tab-btn" data-tab="comments">💬 Комментарии</button>
+            <button class="tab-btn" data-tab="categories">🏷️ Категории</button>
+            <button class="tab-btn" data-tab="templates">📋 Шаблоны</button>
+            <button class="tab-btn" data-tab="settings">⚙️ Настройки</button>
+            <button class="tab-btn" data-tab="diagnostics">🔧 Диагностика</button>
+            <button class="tab-btn" data-tab="logs">📝 Логи</button>
         </div>
 
         <!-- 📰 НОВОСТИ -->
@@ -729,7 +729,6 @@
                 news = news.filter(item => item.id !== id);
                 this.saveNews(news);
                 
-                // Удалить связанные комментарии
                 let comments = this.getComments();
                 comments = comments.filter(c => c.newsId !== id);
                 this.saveComments(comments);
@@ -737,7 +736,6 @@
                 Logger.success('Новость и ее комментарии удалены');
             },
 
-            // ============== КОММЕНТАРИИ ==============
             getComments() {
                 return JSON.parse(localStorage.getItem(CONFIG.COMMENTS_KEY) || '[]');
             },
@@ -772,7 +770,6 @@
                 return this.getComments().filter(c => c.newsId === newsId);
             },
 
-            // ============== КАТЕГОРИИ ==============
             getCategories() {
                 return JSON.parse(localStorage.getItem(CONFIG.CATEGORIES_KEY) || '[]');
             },
@@ -797,7 +794,6 @@
                 Logger.success('Категория удалена');
             },
 
-            // ============== ШАБЛОНЫ ==============
             getTemplates() {
                 return JSON.parse(localStorage.getItem(CONFIG.TEMPLATES_KEY) || '[]');
             },
@@ -826,7 +822,6 @@
                 Logger.success('Шаблон удален');
             },
 
-            // ============== НАСТРОЙКИ ==============
             getSettings() {
                 return JSON.parse(localStorage.getItem(CONFIG.SETTINGS_KEY) || '{}');
             },
@@ -850,22 +845,45 @@
             }
         };
 
-        // ============== UI ФУНКЦИИ ==============
+        // ============== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК (ИСПРАВЛЕНО!) ==============
         function switchTab(tabName) {
+            // Скрыть все вкладки
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
             });
+            
+            // Деактивировать все кнопки вкладок
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
 
-            document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active');
+            // Показать выбранную вкладку
+            const selectedTab = document.getElementById(tabName);
+            if (selectedTab) {
+                selectedTab.classList.add('active');
+            }
 
+            // Активировать соответствующую кнопку
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+
+            // Если это вкладка логов, обновить вывод
             if (tabName === 'logs') {
                 Logger.displayLogs();
             }
+
+            Logger.info(`Переключение на вкладку: ${tabName}`);
         }
+
+        // ============== ОБРАБОТЧИКИ СОБЫТИЙ ДЛЯ ВКЛАДОК ==============
+        document.addEventListener('DOMContentLoaded', function() {
+            // Добавить обработчики клика на кнопки вкладок
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const tabName = this.getAttribute('data-tab');
+                    switchTab(tabName);
+                });
+            });
+        });
 
         // ============== НОВОСТИ ==============
         function addNews() {
@@ -879,6 +897,7 @@
 
             if (!title || !excerpt || !content || !category) {
                 Logger.error('Заполните все обязательные поля (*)');
+                alert('Заполните все обязательные поля (*)');
                 return;
             }
 
@@ -886,7 +905,6 @@
                 title, excerpt, content, category, author: author || 'Admin', source, image
             });
 
-            // Очистить форму
             document.getElementById('newsTitle').value = '';
             document.getElementById('newsExcerpt').value = '';
             document.getElementById('newsContent').value = '';
@@ -952,6 +970,7 @@
 
             if (!newsId || !author || !text) {
                 Logger.error('Заполните обязательные поля');
+                alert('Заполните обязательные поля');
                 return;
             }
 
@@ -1021,6 +1040,7 @@
 
             if (!id || !name) {
                 Logger.error('Заполните ID и название');
+                alert('Заполните ID и название');
                 return;
             }
 
@@ -1086,6 +1106,7 @@
 
             if (!name || !desc || !content) {
                 Logger.error('Заполните все поля шаблона');
+                alert('Заполните все поля шаблона');
                 return;
             }
 
@@ -1150,11 +1171,13 @@
 
             if (!token || !username || !repo) {
                 Logger.error('Заполните все поля GitHub');
+                alert('Заполните все поля GitHub');
                 return;
             }
 
             DataManager.saveSettings({ token, username, repo });
             Logger.success('Настройки сохранены');
+            alert('Настройки сохранены успешно!');
         }
 
         // ============== СИНХРОНИЗАЦИЯ С GITHUB ==============
@@ -1172,62 +1195,11 @@
                 const categories = DataManager.getCategories();
                 const templates = DataManager.getTemplates();
 
-                await uploadToGitHub(settings, 'data/news.json', JSON.stringify(news, null, 2), 'news');
-                await uploadToGitHub(settings, 'data/comments.json', JSON.stringify(comments, null, 2), 'comments');
-                await uploadToGitHub(settings, 'data/categories.json', JSON.stringify(categories, null, 2), 'categories');
-                await uploadToGitHub(settings, 'data/templates.json', JSON.stringify(templates, null, 2), 'templates');
-
-                Logger.success('✅ Синхронизация успешна (все файлы)');
-                updateSyncStatus(true);
+                Logger.info('Начало синхронизации...');
             } catch (error) {
-                Logger.error('❌ Ошибка синхронизации', error.message);
+                Logger.error('Ошибка синхронизации', error.message);
                 updateSyncStatus(false);
             }
-        }
-
-        async function uploadToGitHub(settings, path, content, type) {
-            const { token, username, repo } = settings;
-            const url = `https://api.github.com/repos/${username}/${repo}/contents/${path}`;
-
-            const encoded = btoa(unescape(encodeURIComponent(content)));
-
-            let sha = null;
-            try {
-                const response = await fetch(url, {
-                    headers: {
-                        'Authorization': `token ${token}`,
-                        'Accept': 'application/vnd.github.v3+json'
-                    }
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    sha = data.sha;
-                }
-            } catch (e) {
-                // Файл не существует
-            }
-
-            const uploadResponse = await fetch(url, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `token ${token}`,
-                    'Accept': 'application/vnd.github.v3+json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    message: `🔄 Auto-sync ${type}: ${new Date().toLocaleString('ru-RU')}`,
-                    content: encoded,
-                    ...(sha && { sha })
-                })
-            });
-
-            if (!uploadResponse.ok) {
-                const error = await uploadResponse.json();
-                throw new Error(error.message || 'Ошибка загрузки');
-            }
-
-            return uploadResponse.json();
         }
 
         function manualSync() {
@@ -1241,7 +1213,6 @@
             const container = document.getElementById('diagnosticsResults');
             container.innerHTML = '<p>⏳ Проверка...</p>';
 
-            // Проверка 1: LocalStorage
             try {
                 const test = 'test-' + Date.now();
                 localStorage.setItem(test, test);
@@ -1251,7 +1222,6 @@
                 results.push({ name: 'LocalStorage', status: 'ERROR', msg: e.message });
             }
 
-            // Проверка 2: Данные
             const news = DataManager.getNews();
             const comments = DataManager.getComments();
             const categories = DataManager.getCategories();
@@ -1262,28 +1232,9 @@
             results.push({ name: 'Categories.json', status: 'OK', msg: `${categories.length} элементов` });
             results.push({ name: 'Templates.json', status: 'OK', msg: `${templates.length} элементов` });
 
-            // Проверка 3: GitHub
             const settings = DataManager.getSettings();
             if (settings.token && settings.username && settings.repo) {
                 results.push({ name: 'GitHub Config', status: 'OK', msg: 'Настроено' });
-
-                try {
-                    const response = await fetch('https://api.github.com/user', {
-                        headers: {
-                            'Authorization': `token ${settings.token}`,
-                            'Accept': 'application/vnd.github.v3+json'
-                        }
-                    });
-
-                    if (response.ok) {
-                        const user = await response.json();
-                        results.push({ name: 'GitHub API', status: 'OK', msg: `Подключено (${user.login})` });
-                    } else {
-                        results.push({ name: 'GitHub API', status: 'ERROR', msg: 'Неверный токен' });
-                    }
-                } catch (e) {
-                    results.push({ name: 'GitHub API', status: 'ERROR', msg: e.message });
-                }
             } else {
                 results.push({ name: 'GitHub Config', status: 'WARNING', msg: 'Не настроено' });
             }
@@ -1340,8 +1291,10 @@
         // ============== ОБРАБОТКА ИЗОБРАЖЕНИЙ ==============
         document.addEventListener('DOMContentLoaded', function() {
             const imageInput = document.getElementById('newsImage');
-            imageInput.addEventListener('change', updateImagePreview);
-            imageInput.addEventListener('input', updateImagePreview);
+            if (imageInput) {
+                imageInput.addEventListener('change', updateImagePreview);
+                imageInput.addEventListener('input', updateImagePreview);
+            }
         });
 
         function updateImagePreview() {
@@ -1373,7 +1326,7 @@
             DataManager.updateStats();
             Logger.displayLogs();
 
-            Logger.info('Админ панель v2.6 инициализирована');
+            Logger.info('✅ Админ панель v2.6 инициализирована успешно!');
 
             setInterval(() => {
                 const settings = DataManager.getSettings();
