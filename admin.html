@@ -477,42 +477,16 @@
                 <div class="grid-2">
                     <div class="form-group">
                         <label>Эмодзи</label>
-                        <select id="catEmoji" style="max-width: 100%;">
-                            <option value="">🤖 Выберите смайл...</option>
-                            <option value="🤖">🤖 Робот</option>
-                            <option value="🚀">🚀 Ракета</option>
-                            <option value="🌐">🌐 Интернет</option>
-                            <option value="💻">💻 Компьютер</option>
-                            <option value="📱">📱 Мобильный</option>
-                            <option value="⚙️">⚙️ Настройки</option>
-                            <option value="🔧">🔧 Инструменты</option>
-                            <option value="💡">💡 Идея</option>
-                            <option value="🎮">🎮 Игры</option>
-                            <option value="📡">📡 Сигнал</option>
-                            <option value="🔐">🔐 Безопасность</option>
-                            <option value="📊">📊 Аналитика</option>
-                            <option value="🎨">🎨 Дизайн</option>
-                            <option value="📚">📚 Библиотека</option>
-                            <option value="🏆">🏆 Премия</option>
-                            <option value="⚡">⚡ Энергия</option>
-                            <option value="🌟">🌟 Звезда</option>
-                            <option value="📈">📈 График</option>
-                            <option value="🎯">🎯 Цель</option>
-                            <option value="🔔">🔔 Уведомление</option>
-                            <option value="💬">💬 Чат</option>
-                            <option value="📺">📺 ТВ</option>
-                            <option value="🎬">🎬 Кино</option>
-                            <option value="🎵">🎵 Музыка</option>
-                            <option value="🎤">🎤 Микрофон</option>
-                            <option value="📸">📸 Камера</option>
-                            <option value="🖼️">🖼️ Галерея</option>
-                            <option value="🌈">🌈 Радуга</option>
-                            <option value="🎁">🎁 Подарок</option>
-                            <option value="🚗">🚗 Автомобиль</option>
-                            <option value="✈️">✈️ Самолет</option>
-                            <option value="🌍">🌍 Мир</option>
-                            <option value="🏢">🏢 Компания</option>
-                            <option value="📦">📦 Посылка</option>
+                        <select id="catEmoji">
+                            <option value="🤖">🤖</option>
+                            <option value="💡">💡</option>
+                            <option value="🎮">🎮</option>
+                            <option value="📱">📱</option>
+                            <option value="💻">💻</option>
+                            <option value="🔬">🔬</option>
+                            <option value="📡">📡</option>
+                            <option value="🔧">🔧</option>
+                            <option value="📦">📦</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -592,84 +566,80 @@
             SETTINGS_KEY: 'github-settings'
         };
 
+        // === GitHubManager ===
         const GitHubManager = {
             async getToken() {
-                return document.getElementById('githubToken')?.value || '';
+                return localStorage.getItem('github-token') || '';
             },
             async getUsername() {
-                return document.getElementById('githubUsername')?.value || '';
+                return localStorage.getItem('github-username') || '';
             },
             async getRepo() {
-                return document.getElementById('githubRepo')?.value || '';
+                return localStorage.getItem('github-repo') || '';
             },
-            async makeRequest(method, path, data = null) {
+            async makeRequest(url, options = {}) {
                 const token = await this.getToken();
                 const username = await this.getUsername();
                 const repo = await this.getRepo();
-
+                
                 if (!token || !username || !repo) {
-                    throw new Error('⚠️ Укажите GitHub Token, Username и Repository Name в настройках');
-                }
-
-                const url = `https://api.github.com/repos/${username}/${repo}/contents${path}`;
-                const options = {
-                    method,
-                    headers: {
-                        'Authorization': `token ${token}`,
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/vnd.github.v3+json'
-                    }
-                };
-
-                if (data) {
-                    options.body = JSON.stringify(data);
-                }
-
-                try {
-                    const response = await fetch(url, options);
-                    if (!response.ok) {
-                        const error = await response.json();
-                        throw new Error(`GitHub API: ${error.message || response.statusText}`);
-                    }
-                    return await response.json();
-                } catch (error) {
-                    console.error('GitHub Request Error:', error);
-                    throw error;
-                }
-            },
-            async getFileContent(path) {
-                try {
-                    const response = await this.makeRequest('GET', path);
-                    const content = atob(response.content);
-                    return { content, sha: response.sha };
-                } catch (error) {
+                    // Не выкидываем ошибку — просто пропускаем синхронизацию
+                    console.warn('GitHub: настройки не заданы. Синхронизация отключена.');
                     return null;
                 }
-            },
-            async updateFile(path, content, message) {
-                try {
-                    const existing = await this.getFileContent(path);
-                    const data = {
-                        message,
-                        content: btoa(content),
-                        ...(existing && { sha: existing.sha })
-                    };
-                    await this.makeRequest('PUT', path, data);
-                    return true;
-                } catch (error) {
-                    alert(`❌ Ошибка сохранения: ${error.message}`);
-                    return false;
+
+                const fullUrl = `https://api.github.com/repos/${username}/${repo}/contents${url}`;
+                const headers = {
+                    'Authorization': `token ${token}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/vnd.github.v3+json'
+                };
+
+                const response = await fetch(fullUrl, {
+                    ...options,
+                    headers: { ...headers, ...options.headers }
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('GitHub API error:', response.status, errorText);
+                    return null;
                 }
+
+                return response.json();
+            },
+            async getFile(path) {
+                const data = await this.makeRequest(path);
+                if (!data) return null;
+                return atob(data.content);
+            },
+            async updateFile(path, content, message = 'Update via admin panel') {
+                const existing = await this.makeRequest(path);
+                const sha = existing?.sha || null;
+
+                const payload = {
+                    message,
+                    content: btoa(unescape(encodeURIComponent(content))),
+                    ...(sha ? { sha } : {})
+                };
+
+                return this.makeRequest(path, {
+                    method: 'PUT',
+                    body: JSON.stringify(payload)
+                });
             }
         };
 
+        // === DataManager ===
         const DataManager = {
             getNews() {
                 return JSON.parse(localStorage.getItem(CONFIG.NEWS_KEY) || '[]');
             },
             saveNews(news) {
                 localStorage.setItem(CONFIG.NEWS_KEY, JSON.stringify(news));
-                GitHubManager.updateFile('/data/news.json', JSON.stringify(news, null, 2), '📰 Обновление новостей');
+                // Синхронизируем с GitHub, только если настройки заданы
+                GitHubManager.updateFile('/data/news.json', JSON.stringify(news, null, 2), '📰 Обновление новостей')
+                    .catch(err => console.warn('Не удалось синхронизировать новости:', err));
                 this.updateStats();
             },
             addNews(newsData) {
@@ -698,7 +668,8 @@
             },
             saveComments(comments) {
                 localStorage.setItem(CONFIG.COMMENTS_KEY, JSON.stringify(comments));
-                GitHubManager.updateFile('/data/comments.json', JSON.stringify(comments, null, 2), '💬 Обновление комментариев');
+                GitHubManager.updateFile('/data/comments.json', JSON.stringify(comments, null, 2), '💬 Обновление комментариев')
+                    .catch(err => console.warn('Не удалось синхронизировать комментарии:', err));
                 this.updateStats();
             },
             addComment(commentData) {
@@ -726,7 +697,8 @@
             },
             saveCategories(categories) {
                 localStorage.setItem(CONFIG.CATEGORIES_KEY, JSON.stringify(categories));
-                GitHubManager.updateFile('/data/categories.json', JSON.stringify(categories, null, 2), '🏷️ Обновление категорий');
+                GitHubManager.updateFile('/data/categories.json', JSON.stringify(categories, null, 2), '🏷️ Обновление категорий')
+                    .catch(err => console.warn('Не удалось синхронизировать категории:', err));
                 this.updateStats();
             },
             addCategory(catData) {
@@ -745,13 +717,14 @@
             },
             saveTemplates(templates) {
                 localStorage.setItem(CONFIG.TEMPLATES_KEY, JSON.stringify(templates));
-                GitHubManager.updateFile('/data/templates.json', JSON.stringify(templates, null, 2), '📋 Обновление шаблонов');
+                GitHubManager.updateFile('/data/templates.json', JSON.stringify(templates, null, 2), '📋 Обновление шаблонов')
+                    .catch(err => console.warn('Не удалось синхронизировать шаблоны:', err));
                 this.updateStats();
             },
             addTemplate(tplData) {
                 const templates = this.getTemplates();
                 const newTemplate = {
-                    id: templates.length + 1,
+                    id: Date.now(),
                     ...tplData
                 };
                 templates.push(newTemplate);
@@ -768,7 +741,13 @@
             },
             saveSettings(settings) {
                 localStorage.setItem(CONFIG.SETTINGS_KEY, JSON.stringify(settings));
-                GitHubManager.updateFile('/data/settings.json', JSON.stringify(settings, null, 2), '⚙️ Обновление настроек');
+                // Сохраняем в отдельные ключи для GitHubManager
+                localStorage.setItem('github-token', settings.token || '');
+                localStorage.setItem('github-username', settings.username || '');
+                localStorage.setItem('github-repo', settings.repo || '');
+                // Синхронизируем настройки (опционально)
+                GitHubManager.updateFile('/data/settings.json', JSON.stringify(settings, null, 2), '⚙️ Обновление настроек')
+                    .catch(err => console.warn('Не удалось синхронизировать настройки:', err));
             },
 
             updateStats() {
@@ -784,21 +763,18 @@
             }
         };
 
+        // === Функции отображения и управления ===
         function switchTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
 
             const selectedTab = document.getElementById(tabName);
-            if (selectedTab) selectedTab.classList.add('active');
-
             const activeBtn = document.querySelector(`[data-tab="${tabName}"]`);
+            if (selectedTab) selectedTab.classList.add('active');
             if (activeBtn) activeBtn.classList.add('active');
         }
 
+        // Новости
         function addNews() {
             const title = document.getElementById('newsTitle').value.trim();
             const excerpt = document.getElementById('newsExcerpt').value.trim();
@@ -813,16 +789,11 @@
                 return;
             }
 
-            DataManager.addNews({
-                title, excerpt, content, category, author, source, image
-            });
+            DataManager.addNews({ title, excerpt, content, category, author, source, image });
 
-            document.getElementById('newsTitle').value = '';
-            document.getElementById('newsExcerpt').value = '';
-            document.getElementById('newsContent').value = '';
-            document.getElementById('newsAuthor').value = '';
-            document.getElementById('newsSource').value = '';
-            document.getElementById('newsImage').value = '';
+            ['newsTitle', 'newsExcerpt', 'newsContent', 'newsAuthor', 'newsSource', 'newsImage'].forEach(id => {
+                document.getElementById(id).value = '';
+            });
             document.getElementById('imagePreview').style.display = 'none';
 
             displayNews();
@@ -842,7 +813,7 @@
             container.innerHTML = news.map(item => {
                 const commentsCount = DataManager.getCommentsByNews(item.id).length;
                 return `
-                <div class="news-item">
+                <div class="news-item" data-news-id="${item.id}">
                     <div class="news-info">
                         <div class="news-title">${item.title}</div>
                         <div class="news-date">
@@ -856,20 +827,13 @@
                         </div>
                     </div>
                     <div class="news-actions">
-                        <button class="btn btn-danger btn-sm" onclick="deleteNewsItem('${item.id}')">🗑️ Удалить</button>
+                        <button class="btn btn-danger btn-sm" data-action="delete-news" data-id="${item.id}">🗑️ Удалить</button>
                     </div>
-                </div>
-            `).join('');
+                </div>`;
+            }).join('');
         }
 
-        function deleteNewsItem(id) {
-            if (confirm('Удалить новость?')) {
-                DataManager.deleteNews(id);
-                displayNews();
-                displayCommentNewsSelect();
-            }
-        }
-
+        // Комментарии
         function addComment() {
             const newsId = document.getElementById('commentNewsId').value;
             const author = document.getElementById('commentAuthor').value.trim();
@@ -883,10 +847,9 @@
 
             DataManager.addComment({ newsId, author, email, text });
 
-            document.getElementById('commentNewsId').value = '';
-            document.getElementById('commentAuthor').value = '';
-            document.getElementById('commentEmail').value = '';
-            document.getElementById('commentText').value = '';
+            ['commentNewsId', 'commentAuthor', 'commentEmail', 'commentText'].forEach(id => {
+                document.getElementById(id).value = '';
+            });
 
             displayComments();
             alert('✅ Комментарий добавлен!');
@@ -905,36 +868,22 @@
             container.innerHTML = comments.map(comment => {
                 const newsTitle = news.find(n => n.id === comment.newsId)?.title || 'Удаленная новость';
                 return `
-                <div class="comment-item">
+                <div class="comment-item" data-comment-id="${comment.id}">
                     <div class="comment-header">
                         <div>
                             <div class="comment-author">${comment.author}</div>
                             ${comment.email ? `<div style="font-size: 0.85em; color: var(--color-text-secondary);">${comment.email}</div>` : ''}
                         </div>
-                        <button class="btn btn-danger btn-sm" onclick="deleteCommentItem('${comment.id}')">🗑️</button>
+                        <button class="btn btn-danger btn-sm" data-action="delete-comment" data-id="${comment.id}">🗑️</button>
                     </div>
                     <div class="comment-text">${comment.text}</div>
                     <div class="comment-news">📰 К новости: ${newsTitle}</div>
                     <div class="comment-date">⏰ ${new Date(comment.createdAt).toLocaleString('ru-RU')}</div>
-                </div>
-            `).join('');
+                </div>`;
+            }).join('');
         }
 
-        function deleteCommentItem(id) {
-            if (confirm('Удалить комментарий?')) {
-                DataManager.deleteComment(id);
-                displayComments();
-            }
-        }
-
-        function displayCommentNewsSelect() {
-            const news = DataManager.getNews();
-            const select = document.getElementById('commentNewsId');
-            
-            select.innerHTML = '<option value="">Выберите новость...</option>' + 
-                news.map(n => `<option value="${n.id}">${n.title}</option>`).join('');
-        }
-
+        // Категории
         function addCategory() {
             const id = document.getElementById('catId').value.trim();
             const name = document.getElementById('catName').value.trim();
@@ -948,10 +897,9 @@
 
             DataManager.addCategory({ id, name, emoji, color });
 
-            document.getElementById('catId').value = '';
-            document.getElementById('catName').value = '';
-            document.getElementById('catEmoji').value = '';
-            document.getElementById('catColor').value = '';
+            ['catId', 'catName', 'catColor'].forEach(id => {
+                document.getElementById(id).value = '';
+            });
 
             displayCategories();
             displayCategorySelect();
@@ -968,32 +916,24 @@
             }
 
             container.innerHTML = categories.map(cat => `
-                <div class="news-item">
+                <div class="news-item" data-category-id="${cat.id}">
                     <div class="news-info">
                         <div class="news-title">${cat.emoji} ${cat.name}</div>
                         <div class="news-date">ID: ${cat.id}</div>
                     </div>
-                    <button class="btn btn-danger btn-sm" onclick="deleteCategoryItem('${cat.id}')">🗑️</button>
+                    <button class="btn btn-danger btn-sm" data-action="delete-category" data-id="${cat.id}">🗑️</button>
                 </div>
             `).join('');
-        }
-
-        function deleteCategoryItem(id) {
-            if (confirm('Удалить категорию?')) {
-                DataManager.deleteCategory(id);
-                displayCategories();
-                displayCategorySelect();
-            }
         }
 
         function displayCategorySelect() {
             const categories = DataManager.getCategories();
             const select = document.getElementById('newsCategory');
-            
             select.innerHTML = '<option value="">Выберите категорию...</option>' + 
                 categories.map(cat => `<option value="${cat.id}">${cat.emoji} ${cat.name}</option>`).join('');
         }
 
+        // Шаблоны
         function addTemplate() {
             const name = document.getElementById('tplName').value.trim();
             const desc = document.getElementById('tplDesc').value.trim();
@@ -1006,9 +946,9 @@
 
             DataManager.addTemplate({ name, desc, content });
 
-            document.getElementById('tplName').value = '';
-            document.getElementById('tplDesc').value = '';
-            document.getElementById('tplContent').value = '';
+            ['tplName', 'tplDesc', 'tplContent'].forEach(id => {
+                document.getElementById(id).value = '';
+            });
 
             displayTemplates();
             alert('✅ Шаблон создан!');
@@ -1024,14 +964,14 @@
             }
 
             container.innerHTML = templates.map(tpl => `
-                <div class="news-item">
+                <div class="news-item" data-template-id="${tpl.id}">
                     <div class="news-info">
                         <div class="news-title">${tpl.name}</div>
                         <div class="news-date">${tpl.desc}</div>
                     </div>
                     <div class="news-actions">
-                        <button class="btn btn-info btn-sm" onclick="useTemplate(${tpl.id})">📋</button>
-                        <button class="btn btn-danger btn-sm" onclick="deleteTemplateItem(${tpl.id})">🗑️</button>
+                        <button class="btn btn-info btn-sm" data-action="use-template" data-id="${tpl.id}">📋</button>
+                        <button class="btn btn-danger btn-sm" data-action="delete-template" data-id="${tpl.id}">🗑️</button>
                     </div>
                 </div>
             `).join('');
@@ -1039,8 +979,7 @@
 
         function useTemplate(id) {
             const templates = DataManager.getTemplates();
-            const template = templates.find(t => t.id === id);
-            
+            const template = templates.find(t => t.id == id);
             if (template) {
                 document.getElementById('newsContent').value = template.content;
                 switchTab('news');
@@ -1048,13 +987,7 @@
             }
         }
 
-        function deleteTemplateItem(id) {
-            if (confirm('Удалить шаблон?')) {
-                DataManager.deleteTemplate(id);
-                displayTemplates();
-            }
-        }
-
+        // Настройки
         function saveSettings() {
             const token = document.getElementById('githubToken').value.trim();
             const username = document.getElementById('githubUsername').value.trim();
@@ -1064,11 +997,11 @@
             alert('✅ Настройки сохранены!');
         }
 
+        // Превью изображения
         function updateImagePreview() {
             const url = document.getElementById('newsImage').value.trim();
             const preview = document.getElementById('imagePreview');
             const img = document.getElementById('previewImg');
-            
             if (url) {
                 img.src = url;
                 preview.style.display = 'block';
@@ -1077,52 +1010,21 @@
             }
         }
 
-        // Синхронизация с GitHub
-        async function syncFromGitHub() {
-            const token = document.getElementById('githubToken')?.value;
-            if (!token) return;
-
-            try {
-                const newsFile = await GitHubManager.getFileContent('/data/news.json');
-                if (newsFile) {
-                    const news = JSON.parse(newsFile.content);
-                    localStorage.setItem(CONFIG.NEWS_KEY, JSON.stringify(news));
-                }
-
-                const commentsFile = await GitHubManager.getFileContent('/data/comments.json');
-                if (commentsFile) {
-                    const comments = JSON.parse(commentsFile.content);
-                    localStorage.setItem(CONFIG.COMMENTS_KEY, JSON.stringify(comments));
-                }
-
-                const categoriesFile = await GitHubManager.getFileContent('/data/categories.json');
-                if (categoriesFile) {
-                    const categories = JSON.parse(categoriesFile.content);
-                    localStorage.setItem(CONFIG.CATEGORIES_KEY, JSON.stringify(categories));
-                }
-
-                const templatesFile = await GitHubManager.getFileContent('/data/templates.json');
-                if (templatesFile) {
-                    const templates = JSON.parse(templatesFile.content);
-                    localStorage.setItem(CONFIG.TEMPLATES_KEY, JSON.stringify(templates));
-                }
-
-                console.log('✅ Синхронизация с GitHub завершена');
-            } catch (error) {
-                console.error('Ошибка синхронизации:', error);
-            }
+        function displayCommentNewsSelect() {
+            const news = DataManager.getNews();
+            const select = document.getElementById('commentNewsId');
+            select.innerHTML = '<option value="">Выберите новость...</option>' + 
+                news.map(n => `<option value="${n.id}">${n.title}</option>`).join('');
         }
 
-        // ИНИЦИАЛИЗАЦИЯ
-        async function init() {
-            // Регистрируем вкладки
+        // === Делегирование событий ===
+        function setupEventListeners() {
+            // Вкладки
             document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    switchTab(this.getAttribute('data-tab'));
-                });
+                btn.addEventListener('click', () => switchTab(btn.dataset.tab));
             });
 
-            // Регистрируем кнопки
+            // Основные действия
             document.getElementById('addNewsBtn')?.addEventListener('click', addNews);
             document.getElementById('addCommentBtn')?.addEventListener('click', addComment);
             document.getElementById('addCategoryBtn')?.addEventListener('click', addCategory);
@@ -1135,18 +1037,57 @@
                 imgInput.addEventListener('input', updateImagePreview);
             }
 
-            // Загружаем настройки
+            // Делегирование для динамических кнопок
+            document.getElementById('newsList').addEventListener('click', (e) => {
+                const btn = e.target.closest('[data-action="delete-news"]');
+                if (btn && confirm('Удалить новость?')) {
+                    const id = btn.dataset.id;
+                    DataManager.deleteNews(id);
+                    displayNews();
+                    displayCommentNewsSelect();
+                }
+            });
+
+            document.getElementById('commentsList').addEventListener('click', (e) => {
+                const btn = e.target.closest('[data-action="delete-comment"]');
+                if (btn && confirm('Удалить комментарий?')) {
+                    const id = btn.dataset.id;
+                    DataManager.deleteComment(id);
+                    displayComments();
+                }
+            });
+
+            document.getElementById('categoriesList').addEventListener('click', (e) => {
+                const btn = e.target.closest('[data-action="delete-category"]');
+                if (btn && confirm('Удалить категорию?')) {
+                    const id = btn.dataset.id;
+                    DataManager.deleteCategory(id);
+                    displayCategories();
+                    displayCategorySelect();
+                }
+            });
+
+            document.getElementById('templatesList').addEventListener('click', (e) => {
+                const btnDel = e.target.closest('[data-action="delete-template"]');
+                if (btnDel && confirm('Удалить шаблон?')) {
+                    const id = btnDel.dataset.id;
+                    DataManager.deleteTemplate(id);
+                    displayTemplates();
+                }
+
+                const btnUse = e.target.closest('[data-action="use-template"]');
+                if (btnUse) {
+                    useTemplate(btnUse.dataset.id);
+                }
+            });
+        }
+
+        // === Инициализация ===
+        function init() {
             const settings = DataManager.getSettings();
-            const tokenInput = document.getElementById('githubToken');
-            const usernameInput = document.getElementById('githubUsername');
-            const repoInput = document.getElementById('githubRepo');
-
-            if (settings.token && tokenInput) tokenInput.value = settings.token;
-            if (settings.username && usernameInput) usernameInput.value = settings.username;
-            if (settings.repo && repoInput) repoInput.value = settings.repo;
-
-            // Синхронизируем с GitHub
-            await syncFromGitHub();
+            if (settings.token) document.getElementById('githubToken').value = settings.token;
+            if (settings.username) document.getElementById('githubUsername').value = settings.username;
+            if (settings.repo) document.getElementById('githubRepo').value = settings.repo;
 
             displayNews();
             displayComments();
@@ -1155,16 +1096,10 @@
             displayCategorySelect();
             displayCommentNewsSelect();
             DataManager.updateStats();
+
+            setupEventListeners();
         }
 
-        // ✅ ЭКСПОРТ ФУНКЦИЙ В ГЛОБАЛЬНУЮ ОБЛАСТЬ ДЛЯ onclick
-        window.deleteNewsItem = deleteNewsItem;
-        window.deleteCommentItem = deleteCommentItem;
-        window.deleteCategoryItem = deleteCategoryItem;
-        window.deleteTemplateItem = deleteTemplateItem;
-        window.useTemplate = useTemplate;
-
-        // Запускаем при загрузке страницы
         window.addEventListener('load', init);
     </script>
 </body>
