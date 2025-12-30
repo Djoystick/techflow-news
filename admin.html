@@ -688,13 +688,13 @@
         }
 
         function addNews() {
-            const title = document.getElementById('newsTitle').value;
-            const excerpt = document.getElementById('newsExcerpt').value;
-            const content = document.getElementById('newsContent').value;
+            const title = document.getElementById('newsTitle').value.trim();
+            const excerpt = document.getElementById('newsExcerpt').value.trim();
+            const content = document.getElementById('newsContent').value.trim();
             const category = document.getElementById('newsCategory').value;
-            const author = document.getElementById('newsAuthor').value;
-            const source = document.getElementById('newsSource').value;
-            const image = document.getElementById('newsImage').value;
+            const author = document.getElementById('newsAuthor').value.trim() || 'Admin';
+            const source = document.getElementById('newsSource').value.trim();
+            const image = document.getElementById('newsImage').value.trim();
 
             if (!title || !excerpt || !content || !category) {
                 alert('Заполните все обязательные поля (*)');
@@ -702,7 +702,7 @@
             }
 
             DataManager.addNews({
-                title, excerpt, content, category, author: author || 'Admin', source, image
+                title, excerpt, content, category, author, source, image
             });
 
             document.getElementById('newsTitle').value = '';
@@ -746,8 +746,8 @@
                     <div class="news-actions">
                         <button class="btn btn-danger btn-sm" onclick="deleteNewsItem('${item.id}')">🗑️ Удалить</button>
                     </div>
-                </div>
-            `).join('');
+                </div>`;
+            }).join('');
         }
 
         function deleteNewsItem(id) {
@@ -760,9 +760,9 @@
 
         function addComment() {
             const newsId = document.getElementById('commentNewsId').value;
-            const author = document.getElementById('commentAuthor').value;
-            const email = document.getElementById('commentEmail').value;
-            const text = document.getElementById('commentText').value;
+            const author = document.getElementById('commentAuthor').value.trim();
+            const email = document.getElementById('commentEmail').value.trim();
+            const text = document.getElementById('commentText').value.trim();
 
             if (!newsId || !author || !text) {
                 alert('Заполните обязательные поля');
@@ -804,8 +804,8 @@
                     <div class="comment-text">${comment.text}</div>
                     <div class="comment-news">📰 К новости: ${newsTitle}</div>
                     <div class="comment-date">⏰ ${new Date(comment.createdAt).toLocaleString('ru-RU')}</div>
-                </div>
-            `).join('');
+                </div>`;
+            }).join('');
         }
 
         function deleteCommentItem(id) {
@@ -824,22 +824,17 @@
         }
 
         function addCategory() {
-            const id = document.getElementById('catId').value;
-            const name = document.getElementById('catName').value;
-            const emoji = document.getElementById('catEmoji').value;
-            const color = document.getElementById('catColor').value;
+            const id = document.getElementById('catId').value.trim();
+            const name = document.getElementById('catName').value.trim();
+            const emoji = document.getElementById('catEmoji').value.trim() || '📦';
+            const color = document.getElementById('catColor').value.trim() || '#95A5A6';
 
             if (!id || !name) {
                 alert('Заполните ID и название');
                 return;
             }
 
-            DataManager.addCategory({ 
-                id, 
-                name, 
-                emoji: emoji || '📦',
-                color: color || '#95A5A6'
-            });
+            DataManager.addCategory({ id, name, emoji, color });
 
             document.getElementById('catId').value = '';
             document.getElementById('catName').value = '';
@@ -888,9 +883,9 @@
         }
 
         function addTemplate() {
-            const name = document.getElementById('tplName').value;
-            const desc = document.getElementById('tplDesc').value;
-            const content = document.getElementById('tplContent').value;
+            const name = document.getElementById('tplName').value.trim();
+            const desc = document.getElementById('tplDesc').value.trim();
+            const content = document.getElementById('tplContent').value.trim();
 
             if (!name || !desc || !content) {
                 alert('Заполните все поля шаблона');
@@ -949,16 +944,16 @@
         }
 
         function saveSettings() {
-            const token = document.getElementById('githubToken').value;
-            const username = document.getElementById('githubUsername').value;
-            const repo = document.getElementById('githubRepo').value;
+            const token = document.getElementById('githubToken').value.trim();
+            const username = document.getElementById('githubUsername').value.trim();
+            const repo = document.getElementById('githubRepo').value.trim();
 
             DataManager.saveSettings({ token, username, repo });
             alert('✅ Настройки сохранены!');
         }
 
         function updateImagePreview() {
-            const url = document.getElementById('newsImage').value;
+            const url = document.getElementById('newsImage').value.trim();
             const preview = document.getElementById('imagePreview');
             const img = document.getElementById('previewImg');
             
@@ -987,14 +982,20 @@
             document.getElementById('saveSettingsBtn')?.addEventListener('click', saveSettings);
 
             // Превью изображения
-            document.getElementById('newsImage')?.addEventListener('change', updateImagePreview);
-            document.getElementById('newsImage')?.addEventListener('input', updateImagePreview);
+            const imgInput = document.getElementById('newsImage');
+            if (imgInput) {
+                imgInput.addEventListener('input', updateImagePreview);
+            }
 
             // Загружаем данные
             const settings = DataManager.getSettings();
-            if (settings.token) document.getElementById('githubToken').value = settings.token;
-            if (settings.username) document.getElementById('githubUsername').value = settings.username;
-            if (settings.repo) document.getElementById('githubRepo').value = settings.repo;
+            const tokenInput = document.getElementById('githubToken');
+            const usernameInput = document.getElementById('githubUsername');
+            const repoInput = document.getElementById('githubRepo');
+
+            if (settings.token && tokenInput) tokenInput.value = settings.token;
+            if (settings.username && usernameInput) usernameInput.value = settings.username;
+            if (settings.repo && repoInput) repoInput.value = settings.repo;
 
             displayNews();
             displayComments();
@@ -1007,6 +1008,13 @@
 
         // Запускаем при загрузке страницы
         window.addEventListener('load', init);
+
+        // ✅ ЭКСПОРТ ФУНКЦИЙ В ГЛОБАЛЬНУЮ ОБЛАСТЬ ДЛЯ onclick
+        window.deleteNewsItem = deleteNewsItem;
+        window.deleteCommentItem = deleteCommentItem;
+        window.deleteCategoryItem = deleteCategoryItem;
+        window.deleteTemplateItem = deleteTemplateItem;
+        window.useTemplate = useTemplate;
     </script>
 </body>
 </html>
