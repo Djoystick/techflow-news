@@ -3,10 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎛️ Админ панель v2.6 - TechFlow News</title>
-    
-    <!-- Error Debug Handler -->
-    <script src="error-debug-v1.js" defer></script>
+    <title>🎛️ Админ панель - TechFlow News</title>
     
     <style>
         * {
@@ -225,44 +222,6 @@
             gap: 15px;
         }
 
-        .log-container {
-            background: var(--color-bg);
-            border: 1px solid var(--color-border);
-            border-radius: 4px;
-            padding: 15px;
-            max-height: 400px;
-            overflow-y: auto;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9em;
-        }
-
-        .log-entry {
-            padding: 8px;
-            margin-bottom: 5px;
-            border-left: 3px solid var(--color-border);
-            border-radius: 2px;
-        }
-
-        .log-success {
-            border-left-color: var(--color-success);
-            color: var(--color-success);
-        }
-
-        .log-error {
-            border-left-color: var(--color-error);
-            color: var(--color-error);
-        }
-
-        .log-warning {
-            border-left-color: var(--color-warning);
-            color: var(--color-warning);
-        }
-
-        .log-info {
-            border-left-color: var(--color-info);
-            color: var(--color-info);
-        }
-
         .news-item {
             background: var(--color-bg);
             border: 1px solid var(--color-border);
@@ -348,72 +307,12 @@
             height: 12px;
             border-radius: 50%;
             animation: pulse 2s infinite;
-        }
-
-        .sync-indicator.online {
             background: var(--color-success);
-        }
-
-        .sync-indicator.offline {
-            background: var(--color-error);
-            animation: none;
         }
 
         @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
-        }
-
-        .alert {
-            padding: 15px;
-            border-radius: 4px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .alert-success {
-            background: rgba(76, 175, 80, 0.1);
-            border: 1px solid var(--color-success);
-            color: var(--color-success);
-        }
-
-        .alert-error {
-            background: rgba(244, 67, 54, 0.1);
-            border: 1px solid var(--color-error);
-            color: var(--color-error);
-        }
-
-        .alert-info {
-            background: rgba(33, 150, 243, 0.1);
-            border: 1px solid var(--color-primary);
-            color: var(--color-primary);
-        }
-
-        .debug-button {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
-            background: #f44336;
-            border: none;
-            border-radius: 50%;
-            color: white;
-            font-size: 20px;
-            cursor: pointer;
-            z-index: 999998;
-            box-shadow: 0 4px 12px rgba(244, 67, 54, 0.4);
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .debug-button:hover {
-            background: #da190b;
-            transform: scale(1.1);
         }
 
         @media (max-width: 768px) {
@@ -451,32 +350,25 @@
     </style>
 </head>
 <body>
-    <!-- Error Debug Button -->
-    <button class="debug-button" onclick="window.errorDebug.showPanel()" title="Показать ошибки">🔴</button>
-
     <header>
         <div class="container">
-            <h1>🎛️ Админ панель v2.6</h1>
-            <p>TechFlow News - Управление контентом + Комментарии</p>
+            <h1>🎛️ Админ панель</h1>
+            <p>TechFlow News - Управление контентом</p>
         </div>
     </header>
 
     <div class="container">
-        <!-- Статус синхронизации -->
         <div class="sync-status">
-            <div id="syncIndicator" class="sync-indicator online"></div>
-            <span id="syncStatus">🔄 Синхронизация активна (News + Comments)</span>
+            <div class="sync-indicator"></div>
+            <span>🔄 Система готова</span>
         </div>
 
-        <!-- Вкладки -->
         <div class="tabs">
             <button class="tab-btn active" data-tab="news">📰 Новости</button>
             <button class="tab-btn" data-tab="comments">💬 Комментарии</button>
             <button class="tab-btn" data-tab="categories">🏷️ Категории</button>
             <button class="tab-btn" data-tab="templates">📋 Шаблоны</button>
             <button class="tab-btn" data-tab="settings">⚙️ Настройки</button>
-            <button class="tab-btn" data-tab="diagnostics">🔧 Диагностика</button>
-            <button class="tab-btn" data-tab="logs">📝 Логи</button>
         </div>
 
         <!-- 📰 НОВОСТИ -->
@@ -631,16 +523,15 @@
             <div class="card">
                 <h3>🔑 GitHub Credentials</h3>
                 <div class="form-group">
-                    <label>GitHub Token *</label>
+                    <label>GitHub Token</label>
                     <input type="password" id="githubToken" placeholder="ghp_...">
-                    <small style="color: var(--color-text-secondary);">Токен будет сохранен локально</small>
                 </div>
                 <div class="form-group">
-                    <label>GitHub Username *</label>
+                    <label>GitHub Username</label>
                     <input type="text" id="githubUsername" placeholder="Ваше имя на GitHub">
                 </div>
                 <div class="form-group">
-                    <label>Имя репозитория *</label>
+                    <label>Имя репозитория</label>
                     <input type="text" id="githubRepo" placeholder="techflow-news">
                 </div>
                 <button class="btn btn-success btn-full" id="saveSettingsBtn">💾 Сохранить</button>
@@ -652,110 +543,38 @@
                 <p><strong>Комментариев:</strong> <span id="statsComments">0</span></p>
                 <p><strong>Категорий:</strong> <span id="statsCategories">0</span></p>
                 <p><strong>Шаблонов:</strong> <span id="statsTemplates">0</span></p>
-                <p><strong>Последнее обновление:</strong> <span id="statsLastUpdate">-</span></p>
             </div>
-
-            <div class="card">
-                <h3>🔄 Синхронизация</h3>
-                <button class="btn btn-info btn-full" id="manualSyncBtn">🔄 Синхронизировать</button>
-                <p style="margin-top: 10px; font-size: 0.9em; color: var(--color-text-secondary);">
-                    Все данные синхронизируются каждые 5 минут.
-                </p>
-            </div>
-        </div>
-
-        <!-- 🔧 ДИАГНОСТИКА -->
-        <div id="diagnostics" class="tab-content">
-            <h2>🔧 Расширенная диагностика</h2>
-            <button class="btn btn-primary" id="runDiagnosticsBtn">🔄 Запустить диагностику</button>
-            <div id="diagnosticsResults" style="margin-top: 20px;"></div>
-        </div>
-
-        <!-- 📝 ЛОГИ -->
-        <div id="logs" class="tab-content">
-            <h2>📝 Логирование событий</h2>
-            <div style="margin-bottom: 20px;">
-                <button class="btn btn-warning" id="clearLogsBtn">🗑️ Очистить</button>
-                <button class="btn btn-info" id="exportLogsBtn">📥 Экспорт</button>
-            </div>
-            <div class="log-container" id="logsContainer"></div>
         </div>
     </div>
 
     <script>
-        // ============== КОНФИГУРАЦИЯ ==============
         const CONFIG = {
             NEWS_KEY: 'news-data',
             COMMENTS_KEY: 'comments-data',
             CATEGORIES_KEY: 'categories-data',
             TEMPLATES_KEY: 'templates-data',
-            SETTINGS_KEY: 'github-settings',
-            LOGS_KEY: 'admin-logs'
+            SETTINGS_KEY: 'github-settings'
         };
 
-        // ============== ЛОГИРОВАНИЕ ==============
-        const Logger = {
-            log(type, message, data = null) {
-                const timestamp = new Date().toLocaleTimeString('ru-RU');
-                const logEntry = { type, message, timestamp, data };
-                
-                let logs = JSON.parse(localStorage.getItem(CONFIG.LOGS_KEY) || '[]');
-                logs.push(logEntry);
-                
-                if (logs.length > 1000) {
-                    logs = logs.slice(-1000);
-                }
-                
-                localStorage.setItem(CONFIG.LOGS_KEY, JSON.stringify(logs));
-                this.displayLogs();
-            },
-
-            success(msg, data) { this.log('SUCCESS', msg, data); },
-            error(msg, data) { this.log('ERROR', msg, data); },
-            warning(msg, data) { this.log('WARNING', msg, data); },
-            info(msg, data) { this.log('INFO', msg, data); },
-
-            displayLogs() {
-                const logs = JSON.parse(localStorage.getItem(CONFIG.LOGS_KEY) || '[]');
-                const container = document.getElementById('logsContainer');
-                
-                container.innerHTML = logs.map(log => {
-                    const className = `log-${log.type.toLowerCase()}`;
-                    return `<div class="log-entry ${className}">
-                        [${log.type}] ${log.timestamp} - ${log.message}
-                    </div>`;
-                }).join('');
-                
-                container.scrollTop = container.scrollHeight;
-            }
-        };
-
-        // ============== УПРАВЛЕНИЕ ДАННЫМИ ==============
         const DataManager = {
             getNews() {
                 return JSON.parse(localStorage.getItem(CONFIG.NEWS_KEY) || '[]');
             },
-
             saveNews(news) {
                 localStorage.setItem(CONFIG.NEWS_KEY, JSON.stringify(news));
-                Logger.success('Новость сохранена в LocalStorage');
                 this.updateStats();
             },
-
             addNews(newsData) {
                 const news = this.getNews();
                 const newItem = {
                     id: 'news-' + Date.now(),
                     ...newsData,
-                    createdAt: new Date().toISOString(),
-                    updatedAt: new Date().toISOString(),
-                    commentsCount: 0
+                    createdAt: new Date().toISOString()
                 };
                 news.push(newItem);
                 this.saveNews(news);
                 return newItem;
             },
-
             deleteNews(id) {
                 let news = this.getNews();
                 news = news.filter(item => item.id !== id);
@@ -764,20 +583,15 @@
                 let comments = this.getComments();
                 comments = comments.filter(c => c.newsId !== id);
                 this.saveComments(comments);
-                
-                Logger.success('Новость и ее комментарии удалены');
             },
 
             getComments() {
                 return JSON.parse(localStorage.getItem(CONFIG.COMMENTS_KEY) || '[]');
             },
-
             saveComments(comments) {
                 localStorage.setItem(CONFIG.COMMENTS_KEY, JSON.stringify(comments));
-                Logger.success('Комментарии сохранены в LocalStorage');
                 this.updateStats();
             },
-
             addComment(commentData) {
                 const comments = this.getComments();
                 const newComment = {
@@ -787,17 +601,13 @@
                 };
                 comments.push(newComment);
                 this.saveComments(comments);
-                Logger.success('Комментарий добавлен');
                 return newComment;
             },
-
             deleteComment(id) {
                 let comments = this.getComments();
                 comments = comments.filter(c => c.id !== id);
                 this.saveComments(comments);
-                Logger.success('Комментарий удален');
             },
-
             getCommentsByNews(newsId) {
                 return this.getComments().filter(c => c.newsId === newsId);
             },
@@ -805,37 +615,28 @@
             getCategories() {
                 return JSON.parse(localStorage.getItem(CONFIG.CATEGORIES_KEY) || '[]');
             },
-
             saveCategories(categories) {
                 localStorage.setItem(CONFIG.CATEGORIES_KEY, JSON.stringify(categories));
-                Logger.success('Категории сохранены в LocalStorage');
                 this.updateStats();
             },
-
             addCategory(catData) {
                 const categories = this.getCategories();
                 categories.push(catData);
                 this.saveCategories(categories);
-                Logger.success('Категория добавлена');
             },
-
             deleteCategory(id) {
                 let categories = this.getCategories();
                 categories = categories.filter(cat => cat.id !== id);
                 this.saveCategories(categories);
-                Logger.success('Категория удалена');
             },
 
             getTemplates() {
                 return JSON.parse(localStorage.getItem(CONFIG.TEMPLATES_KEY) || '[]');
             },
-
             saveTemplates(templates) {
                 localStorage.setItem(CONFIG.TEMPLATES_KEY, JSON.stringify(templates));
-                Logger.success('Шаблоны сохранены в LocalStorage');
                 this.updateStats();
             },
-
             addTemplate(tplData) {
                 const templates = this.getTemplates();
                 const newTemplate = {
@@ -844,23 +645,18 @@
                 };
                 templates.push(newTemplate);
                 this.saveTemplates(templates);
-                Logger.success('Шаблон создан');
             },
-
             deleteTemplate(id) {
                 let templates = this.getTemplates();
                 templates = templates.filter(tpl => tpl.id !== id);
                 this.saveTemplates(templates);
-                Logger.success('Шаблон удален');
             },
 
             getSettings() {
                 return JSON.parse(localStorage.getItem(CONFIG.SETTINGS_KEY) || '{}');
             },
-
             saveSettings(settings) {
                 localStorage.setItem(CONFIG.SETTINGS_KEY, JSON.stringify(settings));
-                Logger.success('Настройки сохранены');
             },
 
             updateStats() {
@@ -873,38 +669,24 @@
                 document.getElementById('statsComments').textContent = comments.length;
                 document.getElementById('statsCategories').textContent = categories.length;
                 document.getElementById('statsTemplates').textContent = templates.length;
-                document.getElementById('statsLastUpdate').textContent = new Date().toLocaleString('ru-RU');
             }
         };
 
-        // ============== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ==============
         function switchTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
             });
-            
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
 
             const selectedTab = document.getElementById(tabName);
-            if (selectedTab) {
-                selectedTab.classList.add('active');
-            }
+            if (selectedTab) selectedTab.classList.add('active');
 
             const activeBtn = document.querySelector(`[data-tab="${tabName}"]`);
-            if (activeBtn) {
-                activeBtn.classList.add('active');
-            }
-
-            if (tabName === 'logs') {
-                Logger.displayLogs();
-            }
-
-            Logger.info(`Переключение на вкладку: ${tabName}`);
+            if (activeBtn) activeBtn.classList.add('active');
         }
 
-        // ============== НОВОСТИ ==============
         function addNews() {
             const title = document.getElementById('newsTitle').value;
             const excerpt = document.getElementById('newsExcerpt').value;
@@ -915,12 +697,11 @@
             const image = document.getElementById('newsImage').value;
 
             if (!title || !excerpt || !content || !category) {
-                Logger.error('Заполните все обязательные поля (*)');
                 alert('Заполните все обязательные поля (*)');
                 return;
             }
 
-            const news = DataManager.addNews({
+            DataManager.addNews({
                 title, excerpt, content, category, author: author || 'Admin', source, image
             });
 
@@ -932,10 +713,9 @@
             document.getElementById('newsImage').value = '';
             document.getElementById('imagePreview').style.display = 'none';
 
-            Logger.success('Новость опубликована', { newsId: news.id });
             displayNews();
             displayCommentNewsSelect();
-            syncToGitHub();
+            alert('✅ Новость добавлена!');
         }
 
         function displayNews() {
@@ -955,7 +735,6 @@
                         <div class="news-title">${item.title}</div>
                         <div class="news-date">
                             📅 ${new Date(item.createdAt).toLocaleString('ru-RU')} | 👤 ${item.author}
-                            ${item.source ? ` | 🔗 <a href="${item.source}" target="_blank">Источник</a>` : ''}
                         </div>
                         <div style="margin-top: 5px; color: var(--color-text-secondary); font-size: 0.9em;">
                             ${item.excerpt}
@@ -972,15 +751,13 @@
         }
 
         function deleteNewsItem(id) {
-            if (confirm('Удалить новость и все её комментарии?')) {
+            if (confirm('Удалить новость?')) {
                 DataManager.deleteNews(id);
                 displayNews();
                 displayCommentNewsSelect();
-                syncToGitHub();
             }
         }
 
-        // ============== КОММЕНТАРИИ ==============
         function addComment() {
             const newsId = document.getElementById('commentNewsId').value;
             const author = document.getElementById('commentAuthor').value;
@@ -988,7 +765,6 @@
             const text = document.getElementById('commentText').value;
 
             if (!newsId || !author || !text) {
-                Logger.error('Заполните обязательные поля');
                 alert('Заполните обязательные поля');
                 return;
             }
@@ -1001,7 +777,7 @@
             document.getElementById('commentText').value = '';
 
             displayComments();
-            syncToGitHub();
+            alert('✅ Комментарий добавлен!');
         }
 
         function displayComments() {
@@ -1027,9 +803,7 @@
                     </div>
                     <div class="comment-text">${comment.text}</div>
                     <div class="comment-news">📰 К новости: ${newsTitle}</div>
-                    <div class="comment-date">
-                        ⏰ ${new Date(comment.createdAt).toLocaleString('ru-RU')}
-                    </div>
+                    <div class="comment-date">⏰ ${new Date(comment.createdAt).toLocaleString('ru-RU')}</div>
                 </div>
             `).join('');
         }
@@ -1038,7 +812,6 @@
             if (confirm('Удалить комментарий?')) {
                 DataManager.deleteComment(id);
                 displayComments();
-                syncToGitHub();
             }
         }
 
@@ -1050,7 +823,6 @@
                 news.map(n => `<option value="${n.id}">${n.title}</option>`).join('');
         }
 
-        // ============== КАТЕГОРИИ ==============
         function addCategory() {
             const id = document.getElementById('catId').value;
             const name = document.getElementById('catName').value;
@@ -1058,7 +830,6 @@
             const color = document.getElementById('catColor').value;
 
             if (!id || !name) {
-                Logger.error('Заполните ID и название');
                 alert('Заполните ID и название');
                 return;
             }
@@ -1077,7 +848,7 @@
 
             displayCategories();
             displayCategorySelect();
-            syncToGitHub();
+            alert('✅ Категория добавлена!');
         }
 
         function displayCategories() {
@@ -1105,7 +876,6 @@
                 DataManager.deleteCategory(id);
                 displayCategories();
                 displayCategorySelect();
-                syncToGitHub();
             }
         }
 
@@ -1117,14 +887,12 @@
                 categories.map(cat => `<option value="${cat.id}">${cat.emoji} ${cat.name}</option>`).join('');
         }
 
-        // ============== ШАБЛОНЫ ==============
         function addTemplate() {
             const name = document.getElementById('tplName').value;
             const desc = document.getElementById('tplDesc').value;
             const content = document.getElementById('tplContent').value;
 
             if (!name || !desc || !content) {
-                Logger.error('Заполните все поля шаблона');
                 alert('Заполните все поля шаблона');
                 return;
             }
@@ -1136,7 +904,7 @@
             document.getElementById('tplContent').value = '';
 
             displayTemplates();
-            syncToGitHub();
+            alert('✅ Шаблон создан!');
         }
 
         function displayTemplates() {
@@ -1170,7 +938,6 @@
                 document.getElementById('newsContent').value = template.content;
                 switchTab('news');
                 document.getElementById('newsTitle').focus();
-                Logger.info('Шаблон загружен в форму');
             }
         }
 
@@ -1178,136 +945,18 @@
             if (confirm('Удалить шаблон?')) {
                 DataManager.deleteTemplate(id);
                 displayTemplates();
-                syncToGitHub();
             }
         }
 
-        // ============== НАСТРОЙКИ ==============
         function saveSettings() {
             const token = document.getElementById('githubToken').value;
             const username = document.getElementById('githubUsername').value;
             const repo = document.getElementById('githubRepo').value;
 
-            if (!token || !username || !repo) {
-                Logger.error('Заполните все поля GitHub');
-                alert('Заполните все поля GitHub');
-                return;
-            }
-
             DataManager.saveSettings({ token, username, repo });
-            Logger.success('Настройки сохранены');
-            alert('Настройки сохранены успешно!');
+            alert('✅ Настройки сохранены!');
         }
 
-        // ============== СИНХРОНИЗАЦИЯ ==============
-        async function syncToGitHub() {
-            const settings = DataManager.getSettings();
-            
-            if (!settings.token || !settings.username || !settings.repo) {
-                Logger.warning('GitHub не настроен. Данные сохранены локально.');
-                return;
-            }
-
-            try {
-                const news = DataManager.getNews();
-                const comments = DataManager.getComments();
-                const categories = DataManager.getCategories();
-                const templates = DataManager.getTemplates();
-
-                Logger.info('Начало синхронизации...');
-            } catch (error) {
-                Logger.error('Ошибка синхронизации', error.message);
-                updateSyncStatus(false);
-            }
-        }
-
-        function manualSync() {
-            Logger.info('Начало ручной синхронизации...');
-            syncToGitHub();
-        }
-
-        // ============== ДИАГНОСТИКА ==============
-        async function runDiagnostics() {
-            const results = [];
-            const container = document.getElementById('diagnosticsResults');
-            container.innerHTML = '<p>⏳ Проверка...</p>';
-
-            try {
-                const test = 'test-' + Date.now();
-                localStorage.setItem(test, test);
-                localStorage.removeItem(test);
-                results.push({ name: 'LocalStorage', status: 'OK', msg: 'Работает' });
-            } catch (e) {
-                results.push({ name: 'LocalStorage', status: 'ERROR', msg: e.message });
-            }
-
-            const news = DataManager.getNews();
-            const comments = DataManager.getComments();
-            const categories = DataManager.getCategories();
-            const templates = DataManager.getTemplates();
-            
-            results.push({ name: 'News.json', status: 'OK', msg: `${news.length} элементов` });
-            results.push({ name: 'Comments.json', status: 'OK', msg: `${comments.length} элементов` });
-            results.push({ name: 'Categories.json', status: 'OK', msg: `${categories.length} элементов` });
-            results.push({ name: 'Templates.json', status: 'OK', msg: `${templates.length} элементов` });
-
-            const settings = DataManager.getSettings();
-            if (settings.token && settings.username && settings.repo) {
-                results.push({ name: 'GitHub Config', status: 'OK', msg: 'Настроено' });
-            } else {
-                results.push({ name: 'GitHub Config', status: 'WARNING', msg: 'Не настроено' });
-            }
-
-            container.innerHTML = results.map(r => {
-                const statusClass = r.status === 'OK' ? 'log-success' : 
-                                   r.status === 'ERROR' ? 'log-error' : 'log-warning';
-                return `<div class="log-entry ${statusClass}">
-                    <strong>${r.name}:</strong> ${r.msg}
-                </div>`;
-            }).join('');
-
-            Logger.info('Диагностика завершена');
-        }
-
-        function updateSyncStatus(online) {
-            const indicator = document.getElementById('syncIndicator');
-            const status = document.getElementById('syncStatus');
-            
-            if (online) {
-                indicator.classList.add('online');
-                indicator.classList.remove('offline');
-                status.textContent = '✅ Синхронизация активна (News + Comments)';
-            } else {
-                indicator.classList.add('offline');
-                indicator.classList.remove('online');
-                status.textContent = '⚠️ Данные сохраняются локально (GitHub недоступен)';
-            }
-        }
-
-        function clearLogs() {
-            if (confirm('Очистить все логи?')) {
-                localStorage.setItem(CONFIG.LOGS_KEY, '[]');
-                Logger.displayLogs();
-                Logger.info('Логи очищены');
-            }
-        }
-
-        function exportLogs() {
-            const logs = JSON.parse(localStorage.getItem(CONFIG.LOGS_KEY) || '[]');
-            const text = logs.map(log => `[${log.timestamp}] [${log.type}] ${log.message}`).join('\n');
-            
-            const element = document.createElement('a');
-            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-            element.setAttribute('download', `logs-${Date.now()}.txt`);
-            element.style.display = 'none';
-            document.body.appendChild(element);
-            element.click();
-            document.body.removeChild(element);
-            
-            Logger.info('Логи экспортированы');
-        }
-
-        // ============== ОБРАБОТКА ИЗОБРАЖЕНИЙ ==============
         function updateImagePreview() {
             const url = document.getElementById('newsImage').value;
             const preview = document.getElementById('imagePreview');
@@ -1321,56 +970,45 @@
             }
         }
 
-        // ============== РЕГИСТРАЦИЯ ВСЕХ ОБРАБОТЧИКОВ ==============
-        function registerEventListeners() {
+        // РЕГИСТРАЦИЯ ОБРАБОТЧИКОВ - ГЛАВНОЕ ЧТОБЫ БЫЛО ПЕРВЫМ!
+        function attachEventListeners() {
             // Вкладки
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
-                    const tabName = this.getAttribute('data-tab');
-                    switchTab(tabName);
+                    switchTab(this.getAttribute('data-tab'));
                 });
             });
 
-            // Новости
-            const addNewsBtn = document.getElementById('addNewsBtn');
-            if (addNewsBtn) addNewsBtn.addEventListener('click', addNews);
+            // Кнопки
+            const newsBtn = document.getElementById('addNewsBtn');
+            if (newsBtn) newsBtn.addEventListener('click', addNews);
 
-            // Комментарии
-            const addCommentBtn = document.getElementById('addCommentBtn');
-            if (addCommentBtn) addCommentBtn.addEventListener('click', addComment);
+            const commentBtn = document.getElementById('addCommentBtn');
+            if (commentBtn) commentBtn.addEventListener('click', addComment);
 
-            // Категории
-            const addCategoryBtn = document.getElementById('addCategoryBtn');
-            if (addCategoryBtn) addCategoryBtn.addEventListener('click', addCategory);
+            const catBtn = document.getElementById('addCategoryBtn');
+            if (catBtn) catBtn.addEventListener('click', addCategory);
 
-            // Шаблоны
-            const addTemplateBtn = document.getElementById('addTemplateBtn');
-            if (addTemplateBtn) addTemplateBtn.addEventListener('click', addTemplate);
+            const tplBtn = document.getElementById('addTemplateBtn');
+            if (tplBtn) tplBtn.addEventListener('click', addTemplate);
 
-            // Настройки
-            const saveSettingsBtn = document.getElementById('saveSettingsBtn');
-            if (saveSettingsBtn) saveSettingsBtn.addEventListener('click', saveSettings);
+            const settingsBtn = document.getElementById('saveSettingsBtn');
+            if (settingsBtn) settingsBtn.addEventListener('click', saveSettings);
 
-            // Синхронизация
-            const manualSyncBtn = document.getElementById('manualSyncBtn');
-            if (manualSyncBtn) manualSyncBtn.addEventListener('click', manualSync);
-
-            // Диагностика
-            const runDiagnosticsBtn = document.getElementById('runDiagnosticsBtn');
-            if (runDiagnosticsBtn) runDiagnosticsBtn.addEventListener('click', runDiagnostics);
-
-            // Логи
-            const clearLogsBtn = document.getElementById('clearLogsBtn');
-            if (clearLogsBtn) clearLogsBtn.addEventListener('click', clearLogs);
-
-            const exportLogsBtn = document.getElementById('exportLogsBtn');
-            if (exportLogsBtn) exportLogsBtn.addEventListener('click', exportLogs);
-
-            Logger.success('Все обработчики событий зарегистрированы');
+            // Превью изображения
+            const imgInput = document.getElementById('newsImage');
+            if (imgInput) {
+                imgInput.addEventListener('change', updateImagePreview);
+                imgInput.addEventListener('input', updateImagePreview);
+            }
         }
 
-        // ============== ИНИЦИАЛИЗАЦИЯ ==============
+        // ИНИЦИАЛИЗАЦИЯ
         function init() {
+            // 1. Сначала регистрируем ВСЕ обработчики событий
+            attachEventListeners();
+
+            // 2. Потом загружаем данные
             const settings = DataManager.getSettings();
             if (settings.token) document.getElementById('githubToken').value = settings.token;
             if (settings.username) document.getElementById('githubUsername').value = settings.username;
@@ -1383,24 +1021,6 @@
             displayCategorySelect();
             displayCommentNewsSelect();
             DataManager.updateStats();
-            Logger.displayLogs();
-
-            registerEventListeners();
-
-            const imageInput = document.getElementById('newsImage');
-            if (imageInput) {
-                imageInput.addEventListener('change', updateImagePreview);
-                imageInput.addEventListener('input', updateImagePreview);
-            }
-
-            Logger.info('✅ Админ панель v2.6 инициализирована успешно!');
-
-            setInterval(() => {
-                const settings = DataManager.getSettings();
-                if (settings.token && settings.username && settings.repo) {
-                    syncToGitHub();
-                }
-            }, 5 * 60 * 1000);
         }
 
         if (document.readyState === 'loading') {
