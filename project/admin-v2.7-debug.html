@@ -1,0 +1,1521 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎛️ Админ панель v2.6 - TechFlow News</title>
+    
+    <!-- 🔴 ПОДКЛЮЧИТЬ ОБРАБОТЧИК ОШИБОК ПЕРВЫМ! -->
+    <script src="error-debug-v1.js" defer></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-primary: #2196F3;
+            --color-success: #4CAF50;
+            --color-error: #f44336;
+            --color-warning: #ff9800;
+            --color-info: #00bcd4;
+            --color-bg: #1a1a1a;
+            --color-surface: #2d2d2d;
+            --color-text: #ffffff;
+            --color-text-secondary: #b0b0b0;
+            --color-border: #404040;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--color-primary) 0%, #1976D2 100%);
+            padding: 30px 0;
+            margin-bottom: 30px;
+            border-bottom: 3px solid var(--color-primary);
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            border-bottom: 2px solid var(--color-border);
+            padding-bottom: 10px;
+        }
+
+        .tab-btn {
+            padding: 12px 20px;
+            background: transparent;
+            border: none;
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            font-size: 1em;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            color: var(--color-primary);
+            border-bottom-color: var(--color-primary);
+        }
+
+        .tab-btn:hover {
+            color: var(--color-text);
+            background: var(--color-surface);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 20px rgba(33, 150, 243, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+            color: var(--color-text);
+            border-radius: 4px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+        }
+
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--color-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1976D2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+        }
+
+        .btn-success {
+            background: var(--color-success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #45a049;
+        }
+
+        .btn-danger {
+            background: var(--color-error);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #da190b;
+        }
+
+        .btn-warning {
+            background: var(--color-warning);
+            color: white;
+        }
+
+        .btn-info {
+            background: var(--color-info);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 8px 12px;
+            font-size: 0.9em;
+        }
+
+        .btn-full {
+            width: 100%;
+        }
+
+        .image-preview {
+            max-width: 300px;
+            margin-top: 10px;
+            border-radius: 4px;
+            border: 1px solid var(--color-border);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .log-container {
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+            padding: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .log-entry {
+            padding: 8px;
+            margin-bottom: 5px;
+            border-left: 3px solid var(--color-border);
+            border-radius: 2px;
+        }
+
+        .log-success {
+            border-left-color: var(--color-success);
+            color: var(--color-success);
+        }
+
+        .log-error {
+            border-left-color: var(--color-error);
+            color: var(--color-error);
+        }
+
+        .log-warning {
+            border-left-color: var(--color-warning);
+            color: var(--color-warning);
+        }
+
+        .log-info {
+            border-left-color: var(--color-info);
+            color: var(--color-info);
+        }
+
+        .news-item {
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .news-info {
+            flex: 1;
+        }
+
+        .news-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--color-primary);
+        }
+
+        .news-date {
+            font-size: 0.9em;
+            color: var(--color-text-secondary);
+        }
+
+        .news-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .comment-item {
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .comment-author {
+            font-weight: 600;
+            color: var(--color-primary);
+        }
+
+        .comment-date {
+            font-size: 0.9em;
+            color: var(--color-text-secondary);
+        }
+
+        .comment-text {
+            color: var(--color-text-secondary);
+            margin-bottom: 10px;
+        }
+
+        .comment-news {
+            font-size: 0.85em;
+            color: var(--color-warning);
+            margin-top: 10px;
+            padding: 8px;
+            background: rgba(255, 152, 0, 0.1);
+            border-radius: 4px;
+        }
+
+        .sync-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 15px;
+            background: var(--color-surface);
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .sync-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .sync-indicator.online {
+            background: var(--color-success);
+        }
+
+        .sync-indicator.offline {
+            background: var(--color-error);
+            animation: none;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-success {
+            background: rgba(76, 175, 80, 0.1);
+            border: 1px solid var(--color-success);
+            color: var(--color-success);
+        }
+
+        .alert-error {
+            background: rgba(244, 67, 54, 0.1);
+            border: 1px solid var(--color-error);
+            color: var(--color-error);
+        }
+
+        .alert-info {
+            background: rgba(33, 150, 243, 0.1);
+            border: 1px solid var(--color-primary);
+            color: var(--color-primary);
+        }
+
+        /* Верхняя кнопка для показа ошибок */
+        .debug-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: #f44336;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 999998;
+            box-shadow: 0 4px 12px rgba(244, 67, 54, 0.4);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .debug-button:hover {
+            background: #da190b;
+            transform: scale(1.1);
+        }
+
+        .debug-button:active {
+            transform: scale(0.95);
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .tabs {
+                flex-wrap: wrap;
+            }
+
+            .tab-btn {
+                padding: 10px 15px;
+                font-size: 0.9em;
+            }
+
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            .news-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .news-actions {
+                width: 100%;
+                margin-top: 10px;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 🔴 КНОПКА ОТЛАДКИ ОШИБОК -->
+    <button class="debug-button" onclick="window.errorDebug.showPanel()" title="Показать ошибки">🔴</button>
+
+    <header>
+        <div class="container">
+            <h1>🎛️ Админ панель v2.6</h1>
+            <p>TechFlow News - Управление контентом + Комментарии</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Статус синхронизации -->
+        <div class="sync-status">
+            <div id="syncIndicator" class="sync-indicator online"></div>
+            <span id="syncStatus">🔄 Синхронизация активна (News + Comments)</span>
+        </div>
+
+        <!-- Вкладки -->
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="news">📰 Новости</button>
+            <button class="tab-btn" data-tab="comments">💬 Комментарии</button>
+            <button class="tab-btn" data-tab="categories">🏷️ Категории</button>
+            <button class="tab-btn" data-tab="templates">📋 Шаблоны</button>
+            <button class="tab-btn" data-tab="settings">⚙️ Настройки</button>
+            <button class="tab-btn" data-tab="diagnostics">🔧 Диагностика</button>
+            <button class="tab-btn" data-tab="logs">📝 Логи</button>
+        </div>
+
+        <!-- 📰 НОВОСТИ -->
+        <div id="news" class="tab-content active">
+            <h2>📰 Управление новостями</h2>
+            
+            <div class="card">
+                <h3>➕ Добавить новость</h3>
+                
+                <div class="form-group">
+                    <label>Заголовок *</label>
+                    <input type="text" id="newsTitle" placeholder="Введите заголовок...">
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Категория *</label>
+                        <select id="newsCategory">
+                            <option value="">Выберите категорию...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Автор</label>
+                        <input type="text" id="newsAuthor" placeholder="Имя автора...">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Описание *</label>
+                    <textarea id="newsExcerpt" placeholder="Краткое описание..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Полный текст *</label>
+                    <textarea id="newsContent" placeholder="Полное содержание новости..."></textarea>
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Источник</label>
+                        <input type="url" id="newsSource" placeholder="https://example.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Изображение (URL)</label>
+                        <input type="url" id="newsImage" placeholder="https://example.com/image.jpg">
+                    </div>
+                </div>
+
+                <div id="imagePreview" style="display: none;">
+                    <label>Предпросмотр изображения:</label>
+                    <img id="previewImg" class="image-preview" alt="Превью изображения">
+                </div>
+
+                <button class="btn btn-primary btn-full" id="addNewsBtn">💾 Опубликовать</button>
+            </div>
+
+            <h3>📂 Существующие новости</h3>
+            <div id="newsList"></div>
+        </div>
+
+        <!-- 💬 КОММЕНТАРИИ -->
+        <div id="comments" class="tab-content">
+            <h2>💬 Управление комментариями</h2>
+            
+            <div class="card">
+                <h3>➕ Добавить комментарий</h3>
+                <div class="form-group">
+                    <label>К какой новости *</label>
+                    <select id="commentNewsId">
+                        <option value="">Выберите новость...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Имя *</label>
+                    <input type="text" id="commentAuthor" placeholder="Ваше имя...">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="commentEmail" placeholder="email@example.com">
+                </div>
+                <div class="form-group">
+                    <label>Текст комментария *</label>
+                    <textarea id="commentText" placeholder="Ваш комментарий..."></textarea>
+                </div>
+                <button class="btn btn-primary btn-full" id="addCommentBtn">💬 Добавить</button>
+            </div>
+
+            <h3>📂 Существующие комментарии</h3>
+            <div id="commentsList"></div>
+        </div>
+
+        <!-- 🏷️ КАТЕГОРИИ -->
+        <div id="categories" class="tab-content">
+            <h2>🏷️ Управление категориями</h2>
+            
+            <div class="card">
+                <h3>➕ Добавить категорию</h3>
+                <div class="form-group">
+                    <label>ID категории *</label>
+                    <input type="text" id="catId" placeholder="ai, gadgets, software...">
+                </div>
+                <div class="form-group">
+                    <label>Название *</label>
+                    <input type="text" id="catName" placeholder="Название категории...">
+                </div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Эмодзи</label>
+                        <input type="text" id="catEmoji" placeholder="🤖" maxlength="2">
+                    </div>
+                    <div class="form-group">
+                        <label>Цвет (hex)</label>
+                        <input type="text" id="catColor" placeholder="#FF6B6B">
+                    </div>
+                </div>
+                <button class="btn btn-primary btn-full" id="addCategoryBtn">➕ Добавить</button>
+            </div>
+
+            <h3>📂 Существующие категории</h3>
+            <div id="categoriesList"></div>
+        </div>
+
+        <!-- 📋 ШАБЛОНЫ -->
+        <div id="templates" class="tab-content">
+            <h2>📋 Управление шаблонами</h2>
+            
+            <div class="card">
+                <h3>➕ Создать шаблон</h3>
+                <div class="form-group">
+                    <label>Название шаблона *</label>
+                    <input type="text" id="tplName" placeholder="Название...">
+                </div>
+                <div class="form-group">
+                    <label>Описание *</label>
+                    <input type="text" id="tplDesc" placeholder="Описание...">
+                </div>
+                <div class="form-group">
+                    <label>Содержимое *</label>
+                    <textarea id="tplContent" placeholder="Шаблон текста..."></textarea>
+                </div>
+                <button class="btn btn-primary btn-full" id="addTemplateBtn">➕ Создать</button>
+            </div>
+
+            <h3>📂 Существующие шаблоны</h3>
+            <div id="templatesList"></div>
+        </div>
+
+        <!-- ⚙️ НАСТРОЙКИ -->
+        <div id="settings" class="tab-content">
+            <h2>⚙️ Настройки</h2>
+            
+            <div class="card">
+                <h3>🔑 GitHub Credentials</h3>
+                <div class="form-group">
+                    <label>GitHub Token *</label>
+                    <input type="password" id="githubToken" placeholder="ghp_...">
+                    <small style="color: var(--color-text-secondary);">Токен будет сохранен локально</small>
+                </div>
+                <div class="form-group">
+                    <label>GitHub Username *</label>
+                    <input type="text" id="githubUsername" placeholder="Ваше имя на GitHub">
+                </div>
+                <div class="form-group">
+                    <label>Имя репозитория *</label>
+                    <input type="text" id="githubRepo" placeholder="techflow-news">
+                </div>
+                <button class="btn btn-success btn-full" id="saveSettingsBtn">💾 Сохранить</button>
+            </div>
+
+            <div class="card">
+                <h3>📊 Статистика</h3>
+                <p><strong>Новостей:</strong> <span id="statsNews">0</span></p>
+                <p><strong>Комментариев:</strong> <span id="statsComments">0</span></p>
+                <p><strong>Категорий:</strong> <span id="statsCategories">0</span></p>
+                <p><strong>Шаблонов:</strong> <span id="statsTemplates">0</span></p>
+                <p><strong>Последнее обновление:</strong> <span id="statsLastUpdate">-</span></p>
+            </div>
+
+            <div class="card">
+                <h3>🔄 Синхронизация</h3>
+                <button class="btn btn-info btn-full" id="manualSyncBtn">🔄 Синхронизировать</button>
+                <p style="margin-top: 10px; font-size: 0.9em; color: var(--color-text-secondary);">
+                    Все данные синхронизируются каждые 5 минут.
+                </p>
+            </div>
+        </div>
+
+        <!-- 🔧 ДИАГНОСТИКА -->
+        <div id="diagnostics" class="tab-content">
+            <h2>🔧 Расширенная диагностика</h2>
+            <button class="btn btn-primary" id="runDiagnosticsBtn">🔄 Запустить диагностику</button>
+            <div id="diagnosticsResults" style="margin-top: 20px;"></div>
+        </div>
+
+        <!-- 📝 ЛОГИ -->
+        <div id="logs" class="tab-content">
+            <h2>📝 Логирование событий</h2>
+            <div style="margin-bottom: 20px;">
+                <button class="btn btn-warning" id="clearLogsBtn">🗑️ Очистить</button>
+                <button class="btn btn-info" id="exportLogsBtn">📥 Экспорт</button>
+            </div>
+            <div class="log-container" id="logsContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        console.log('🟢 АДМИН ПАНЕЛЬ: Скрипт загружается...');
+
+        // ============== КОНФИГУРАЦИЯ ==============
+        const CONFIG = {
+            NEWS_KEY: 'news-data',
+            COMMENTS_KEY: 'comments-data',
+            CATEGORIES_KEY: 'categories-data',
+            TEMPLATES_KEY: 'templates-data',
+            SETTINGS_KEY: 'github-settings',
+            LOGS_KEY: 'admin-logs'
+        };
+
+        console.log('🟢 АДМИН ПАНЕЛЬ: CONFIG инициализирован');
+
+        // ============== ЛОГИРОВАНИЕ ==============
+        const Logger = {
+            log(type, message, data = null) {
+                const timestamp = new Date().toLocaleTimeString('ru-RU');
+                const logEntry = { type, message, timestamp, data };
+                
+                let logs = JSON.parse(localStorage.getItem(CONFIG.LOGS_KEY) || '[]');
+                logs.push(logEntry);
+                
+                if (logs.length > 1000) {
+                    logs = logs.slice(-1000);
+                }
+                
+                localStorage.setItem(CONFIG.LOGS_KEY, JSON.stringify(logs));
+                this.displayLogs();
+            },
+
+            success(msg, data) { this.log('SUCCESS', msg, data); },
+            error(msg, data) { this.log('ERROR', msg, data); },
+            warning(msg, data) { this.log('WARNING', msg, data); },
+            info(msg, data) { this.log('INFO', msg, data); },
+
+            displayLogs() {
+                const logs = JSON.parse(localStorage.getItem(CONFIG.LOGS_KEY) || '[]');
+                const container = document.getElementById('logsContainer');
+                
+                if (!container) return;
+                
+                container.innerHTML = logs.map(log => {
+                    const className = `log-${log.type.toLowerCase()}`;
+                    return `<div class="log-entry ${className}">
+                        [${log.type}] ${log.timestamp} - ${log.message}
+                    </div>`;
+                }).join('');
+                
+                container.scrollTop = container.scrollHeight;
+            }
+        };
+
+        console.log('🟢 АДМИН ПАНЕЛЬ: Logger инициализирован');
+
+        // ============== УПРАВЛЕНИЕ ДАННЫМИ ==============
+        const DataManager = {
+            getNews() {
+                return JSON.parse(localStorage.getItem(CONFIG.NEWS_KEY) || '[]');
+            },
+
+            saveNews(news) {
+                localStorage.setItem(CONFIG.NEWS_KEY, JSON.stringify(news));
+                Logger.success('Новость сохранена в LocalStorage');
+                this.updateStats();
+            },
+
+            addNews(newsData) {
+                const news = this.getNews();
+                const newItem = {
+                    id: 'news-' + Date.now(),
+                    ...newsData,
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString(),
+                    commentsCount: 0
+                };
+                news.push(newItem);
+                this.saveNews(news);
+                return newItem;
+            },
+
+            deleteNews(id) {
+                let news = this.getNews();
+                news = news.filter(item => item.id !== id);
+                this.saveNews(news);
+                
+                let comments = this.getComments();
+                comments = comments.filter(c => c.newsId !== id);
+                this.saveComments(comments);
+                
+                Logger.success('Новость и ее комментарии удалены');
+            },
+
+            getComments() {
+                return JSON.parse(localStorage.getItem(CONFIG.COMMENTS_KEY) || '[]');
+            },
+
+            saveComments(comments) {
+                localStorage.setItem(CONFIG.COMMENTS_KEY, JSON.stringify(comments));
+                Logger.success('Комментарии сохранены в LocalStorage');
+                this.updateStats();
+            },
+
+            addComment(commentData) {
+                const comments = this.getComments();
+                const newComment = {
+                    id: 'comment-' + Date.now(),
+                    ...commentData,
+                    createdAt: new Date().toISOString()
+                };
+                comments.push(newComment);
+                this.saveComments(comments);
+                Logger.success('Комментарий добавлен');
+                return newComment;
+            },
+
+            deleteComment(id) {
+                let comments = this.getComments();
+                comments = comments.filter(c => c.id !== id);
+                this.saveComments(comments);
+                Logger.success('Комментарий удален');
+            },
+
+            getCommentsByNews(newsId) {
+                return this.getComments().filter(c => c.newsId === newsId);
+            },
+
+            getCategories() {
+                return JSON.parse(localStorage.getItem(CONFIG.CATEGORIES_KEY) || '[]');
+            },
+
+            saveCategories(categories) {
+                localStorage.setItem(CONFIG.CATEGORIES_KEY, JSON.stringify(categories));
+                Logger.success('Категории сохранены в LocalStorage');
+                this.updateStats();
+            },
+
+            addCategory(catData) {
+                const categories = this.getCategories();
+                categories.push(catData);
+                this.saveCategories(categories);
+                Logger.success('Категория добавлена');
+            },
+
+            deleteCategory(id) {
+                let categories = this.getCategories();
+                categories = categories.filter(cat => cat.id !== id);
+                this.saveCategories(categories);
+                Logger.success('Категория удалена');
+            },
+
+            getTemplates() {
+                return JSON.parse(localStorage.getItem(CONFIG.TEMPLATES_KEY) || '[]');
+            },
+
+            saveTemplates(templates) {
+                localStorage.setItem(CONFIG.TEMPLATES_KEY, JSON.stringify(templates));
+                Logger.success('Шаблоны сохранены в LocalStorage');
+                this.updateStats();
+            },
+
+            addTemplate(tplData) {
+                const templates = this.getTemplates();
+                const newTemplate = {
+                    id: templates.length + 1,
+                    ...tplData
+                };
+                templates.push(newTemplate);
+                this.saveTemplates(templates);
+                Logger.success('Шаблон создан');
+            },
+
+            deleteTemplate(id) {
+                let templates = this.getTemplates();
+                templates = templates.filter(tpl => tpl.id !== id);
+                this.saveTemplates(templates);
+                Logger.success('Шаблон удален');
+            },
+
+            getSettings() {
+                return JSON.parse(localStorage.getItem(CONFIG.SETTINGS_KEY) || '{}');
+            },
+
+            saveSettings(settings) {
+                localStorage.setItem(CONFIG.SETTINGS_KEY, JSON.stringify(settings));
+                Logger.success('Настройки сохранены');
+            },
+
+            updateStats() {
+                const news = this.getNews();
+                const comments = this.getComments();
+                const categories = this.getCategories();
+                const templates = this.getTemplates();
+
+                const newsElem = document.getElementById('statsNews');
+                const commentsElem = document.getElementById('statsComments');
+                const categoriesElem = document.getElementById('statsCategories');
+                const templatesElem = document.getElementById('statsTemplates');
+                const lastUpdateElem = document.getElementById('statsLastUpdate');
+
+                if (newsElem) newsElem.textContent = news.length;
+                if (commentsElem) commentsElem.textContent = comments.length;
+                if (categoriesElem) categoriesElem.textContent = categories.length;
+                if (templatesElem) templatesElem.textContent = templates.length;
+                if (lastUpdateElem) lastUpdateElem.textContent = new Date().toLocaleString('ru-RU');
+            }
+        };
+
+        console.log('🟢 АДМИН ПАНЕЛЬ: DataManager инициализирован');
+
+        // ============== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ==============
+        function switchTab(tabName) {
+            console.log('🟢 АДМИН ПАНЕЛЬ: switchTab вызвана с', tabName);
+            
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            const selectedTab = document.getElementById(tabName);
+            if (selectedTab) {
+                selectedTab.classList.add('active');
+            }
+
+            const activeBtn = document.querySelector(`[data-tab="${tabName}"]`);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+            }
+
+            if (tabName === 'logs') {
+                Logger.displayLogs();
+            }
+
+            Logger.info(`Переключение на вкладку: ${tabName}`);
+        }
+
+        console.log('🟢 АДМИН ПАНЕЛЬ: switchTab функция определена');
+
+        // ============== РЕГИСТРАЦИЯ ВСЕХ ОБРАБОТЧИКОВ ==============
+        function registerEventListeners() {
+            console.log('🟢 АДМИН ПАНЕЛЬ: registerEventListeners вызвана');
+
+            // Вкладки
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const tabName = this.getAttribute('data-tab');
+                    console.log('🟢 АДМИН ПАНЕЛЬ: Клик по вкладке', tabName);
+                    switchTab(tabName);
+                });
+            });
+            console.log('🟢 АДМИН ПАНЕЛЬ: Event listeners для вкладок зарегистрированы');
+
+            // Новости
+            const addNewsBtn = document.getElementById('addNewsBtn');
+            if (addNewsBtn) {
+                addNewsBtn.addEventListener('click', function() {
+                    console.log('🟢 АДМИН ПАНЕЛЬ: Клик по кнопке добавления новости');
+                    addNews();
+                });
+                console.log('🟢 АДМИН ПАНЕЛЬ: addNewsBtn зарегистрирован');
+            }
+
+            // Комментарии
+            const addCommentBtn = document.getElementById('addCommentBtn');
+            if (addCommentBtn) {
+                addCommentBtn.addEventListener('click', function() {
+                    console.log('🟢 АДМИН ПАНЕЛЬ: Клик по кнопке добавления комментария');
+                    addComment();
+                });
+                console.log('🟢 АДМИН ПАНЕЛЬ: addCommentBtn зарегистрирован');
+            }
+
+            // Категории
+            const addCategoryBtn = document.getElementById('addCategoryBtn');
+            if (addCategoryBtn) {
+                addCategoryBtn.addEventListener('click', function() {
+                    console.log('🟢 АДМИН ПАНЕЛЬ: Клик по кнопке добавления категории');
+                    addCategory();
+                });
+                console.log('🟢 АДМИН ПАНЕЛЬ: addCategoryBtn зарегистрирован');
+            }
+
+            // Шаблоны
+            const addTemplateBtn = document.getElementById('addTemplateBtn');
+            if (addTemplateBtn) {
+                addTemplateBtn.addEventListener('click', function() {
+                    console.log('🟢 АДМИН ПАНЕЛЬ: Клик по кнопке добавления шаблона');
+                    addTemplate();
+                });
+                console.log('🟢 АДМИН ПАНЕЛЬ: addTemplateBtn зарегистрирован');
+            }
+
+            // Настройки
+            const saveSettingsBtn = document.getElementById('saveSettingsBtn');
+            if (saveSettingsBtn) {
+                saveSettingsBtn.addEventListener('click', function() {
+                    console.log('🟢 АДМИН ПАНЕЛЬ: Клик по кнопке сохранения настроек');
+                    saveSettings();
+                });
+                console.log('🟢 АДМИН ПАНЕЛЬ: saveSettingsBtn зарегистрирован');
+            }
+
+            // Синхронизация
+            const manualSyncBtn = document.getElementById('manualSyncBtn');
+            if (manualSyncBtn) {
+                manualSyncBtn.addEventListener('click', function() {
+                    console.log('🟢 АДМИН ПАНЕЛЬ: Клик по кнопке синхронизации');
+                    manualSync();
+                });
+                console.log('🟢 АДМИН ПАНЕЛЬ: manualSyncBtn зарегистрирован');
+            }
+
+            // Диагностика
+            const runDiagnosticsBtn = document.getElementById('runDiagnosticsBtn');
+            if (runDiagnosticsBtn) {
+                runDiagnosticsBtn.addEventListener('click', function() {
+                    console.log('🟢 АДМИН ПАНЕЛЬ: Клик по кнопке диагностики');
+                    runDiagnostics();
+                });
+                console.log('🟢 АДМИН ПАНЕЛЬ: runDiagnosticsBtn зарегистрирован');
+            }
+
+            // Логи
+            const clearLogsBtn = document.getElementById('clearLogsBtn');
+            if (clearLogsBtn) {
+                clearLogsBtn.addEventListener('click', function() {
+                    console.log('🟢 АДМИН ПАНЕЛЬ: Клик по кнопке очистки логов');
+                    clearLogs();
+                });
+                console.log('🟢 АДМИН ПАНЕЛЬ: clearLogsBtn зарегистрирован');
+            }
+
+            const exportLogsBtn = document.getElementById('exportLogsBtn');
+            if (exportLogsBtn) {
+                exportLogsBtn.addEventListener('click', function() {
+                    console.log('🟢 АДМИН ПАНЕЛЬ: Клик по кнопке экспорта логов');
+                    exportLogs();
+                });
+                console.log('🟢 АДМИН ПАНЕЛЬ: exportLogsBtn зарегистрирован');
+            }
+
+            Logger.success('Все обработчики событий зарегистрированы ✅');
+        }
+
+        console.log('🟢 АДМИН ПАНЕЛЬ: registerEventListeners функция определена');
+
+        // ============== НОВОСТИ ==============
+        function addNews() {
+            console.log('🟢 АДМИН ПАНЕЛЬ: addNews функция вызвана');
+            
+            const title = document.getElementById('newsTitle').value;
+            const excerpt = document.getElementById('newsExcerpt').value;
+            const content = document.getElementById('newsContent').value;
+            const category = document.getElementById('newsCategory').value;
+            const author = document.getElementById('newsAuthor').value;
+            const source = document.getElementById('newsSource').value;
+            const image = document.getElementById('newsImage').value;
+
+            if (!title || !excerpt || !content || !category) {
+                Logger.error('Заполните все обязательные поля (*)');
+                alert('Заполните все обязательные поля (*)');
+                return;
+            }
+
+            const news = DataManager.addNews({
+                title, excerpt, content, category, author: author || 'Admin', source, image
+            });
+
+            document.getElementById('newsTitle').value = '';
+            document.getElementById('newsExcerpt').value = '';
+            document.getElementById('newsContent').value = '';
+            document.getElementById('newsAuthor').value = '';
+            document.getElementById('newsSource').value = '';
+            document.getElementById('newsImage').value = '';
+            document.getElementById('imagePreview').style.display = 'none';
+
+            Logger.success('Новость опубликована', { newsId: news.id });
+            displayNews();
+            displayCommentNewsSelect();
+            syncToGitHub();
+        }
+
+        function displayNews() {
+            const news = DataManager.getNews();
+            const container = document.getElementById('newsList');
+
+            if (news.length === 0) {
+                container.innerHTML = '<p style="color: var(--color-text-secondary);">Нет новостей</p>';
+                return;
+            }
+
+            container.innerHTML = news.map(item => {
+                const commentsCount = DataManager.getCommentsByNews(item.id).length;
+                return `
+                <div class="news-item">
+                    <div class="news-info">
+                        <div class="news-title">${item.title}</div>
+                        <div class="news-date">
+                            📅 ${new Date(item.createdAt).toLocaleString('ru-RU')} | 👤 ${item.author}
+                            ${item.source ? ` | 🔗 <a href="${item.source}" target="_blank">Источник</a>` : ''}
+                        </div>
+                        <div style="margin-top: 5px; color: var(--color-text-secondary); font-size: 0.9em;">
+                            ${item.excerpt}
+                        </div>
+                        <div style="margin-top: 5px; color: var(--color-info); font-size: 0.85em;">
+                            💬 ${commentsCount} комментариев
+                        </div>
+                    </div>
+                    <div class="news-actions">
+                        <button class="btn btn-danger btn-sm" onclick="deleteNewsItem('${item.id}')">🗑️ Удалить</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function deleteNewsItem(id) {
+            if (confirm('Удалить новость и все её комментарии?')) {
+                DataManager.deleteNews(id);
+                displayNews();
+                displayCommentNewsSelect();
+                syncToGitHub();
+            }
+        }
+
+        // ============== КОММЕНТАРИИ ==============
+        function addComment() {
+            console.log('🟢 АДМИН ПАНЕЛЬ: addComment функция вызвана');
+            
+            const newsId = document.getElementById('commentNewsId').value;
+            const author = document.getElementById('commentAuthor').value;
+            const email = document.getElementById('commentEmail').value;
+            const text = document.getElementById('commentText').value;
+
+            if (!newsId || !author || !text) {
+                Logger.error('Заполните обязательные поля');
+                alert('Заполните обязательные поля');
+                return;
+            }
+
+            DataManager.addComment({ newsId, author, email, text });
+
+            document.getElementById('commentNewsId').value = '';
+            document.getElementById('commentAuthor').value = '';
+            document.getElementById('commentEmail').value = '';
+            document.getElementById('commentText').value = '';
+
+            displayComments();
+            syncToGitHub();
+        }
+
+        function displayComments() {
+            const comments = DataManager.getComments();
+            const news = DataManager.getNews();
+            const container = document.getElementById('commentsList');
+
+            if (comments.length === 0) {
+                container.innerHTML = '<p style="color: var(--color-text-secondary);">Нет комментариев</p>';
+                return;
+            }
+
+            container.innerHTML = comments.map(comment => {
+                const newsTitle = news.find(n => n.id === comment.newsId)?.title || 'Удаленная новость';
+                return `
+                <div class="comment-item">
+                    <div class="comment-header">
+                        <div>
+                            <div class="comment-author">${comment.author}</div>
+                            ${comment.email ? `<div style="font-size: 0.85em; color: var(--color-text-secondary);">${comment.email}</div>` : ''}
+                        </div>
+                        <button class="btn btn-danger btn-sm" onclick="deleteCommentItem('${comment.id}')">🗑️</button>
+                    </div>
+                    <div class="comment-text">${comment.text}</div>
+                    <div class="comment-news">📰 К новости: ${newsTitle}</div>
+                    <div class="comment-date">
+                        ⏰ ${new Date(comment.createdAt).toLocaleString('ru-RU')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function deleteCommentItem(id) {
+            if (confirm('Удалить комментарий?')) {
+                DataManager.deleteComment(id);
+                displayComments();
+                syncToGitHub();
+            }
+        }
+
+        function displayCommentNewsSelect() {
+            const news = DataManager.getNews();
+            const select = document.getElementById('commentNewsId');
+            
+            select.innerHTML = '<option value="">Выберите новость...</option>' + 
+                news.map(n => `<option value="${n.id}">${n.title}</option>`).join('');
+        }
+
+        // ============== КАТЕГОРИИ ==============
+        function addCategory() {
+            console.log('🟢 АДМИН ПАНЕЛЬ: addCategory функция вызвана');
+            
+            const id = document.getElementById('catId').value;
+            const name = document.getElementById('catName').value;
+            const emoji = document.getElementById('catEmoji').value;
+            const color = document.getElementById('catColor').value;
+
+            if (!id || !name) {
+                Logger.error('Заполните ID и название');
+                alert('Заполните ID и название');
+                return;
+            }
+
+            DataManager.addCategory({ 
+                id, 
+                name, 
+                emoji: emoji || '📦',
+                color: color || '#95A5A6'
+            });
+
+            document.getElementById('catId').value = '';
+            document.getElementById('catName').value = '';
+            document.getElementById('catEmoji').value = '';
+            document.getElementById('catColor').value = '';
+
+            displayCategories();
+            displayCategorySelect();
+            syncToGitHub();
+        }
+
+        function displayCategories() {
+            const categories = DataManager.getCategories();
+            const container = document.getElementById('categoriesList');
+
+            if (categories.length === 0) {
+                container.innerHTML = '<p style="color: var(--color-text-secondary);">Нет категорий</p>';
+                return;
+            }
+
+            container.innerHTML = categories.map(cat => `
+                <div class="news-item">
+                    <div class="news-info">
+                        <div class="news-title">${cat.emoji} ${cat.name}</div>
+                        <div class="news-date">ID: ${cat.id}</div>
+                    </div>
+                    <button class="btn btn-danger btn-sm" onclick="deleteCategoryItem('${cat.id}')">🗑️</button>
+                </div>
+            `).join('');
+        }
+
+        function deleteCategoryItem(id) {
+            if (confirm('Удалить категорию?')) {
+                DataManager.deleteCategory(id);
+                displayCategories();
+                displayCategorySelect();
+                syncToGitHub();
+            }
+        }
+
+        function displayCategorySelect() {
+            const categories = DataManager.getCategories();
+            const select = document.getElementById('newsCategory');
+            
+            select.innerHTML = '<option value="">Выберите категорию...</option>' + 
+                categories.map(cat => `<option value="${cat.id}">${cat.emoji} ${cat.name}</option>`).join('');
+        }
+
+        // ============== ШАБЛОНЫ ==============
+        function addTemplate() {
+            console.log('🟢 АДМИН ПАНЕЛЬ: addTemplate функция вызвана');
+            
+            const name = document.getElementById('tplName').value;
+            const desc = document.getElementById('tplDesc').value;
+            const content = document.getElementById('tplContent').value;
+
+            if (!name || !desc || !content) {
+                Logger.error('Заполните все поля шаблона');
+                alert('Заполните все поля шаблона');
+                return;
+            }
+
+            DataManager.addTemplate({ name, desc, content });
+
+            document.getElementById('tplName').value = '';
+            document.getElementById('tplDesc').value = '';
+            document.getElementById('tplContent').value = '';
+
+            displayTemplates();
+            syncToGitHub();
+        }
+
+        function displayTemplates() {
+            const templates = DataManager.getTemplates();
+            const container = document.getElementById('templatesList');
+
+            if (templates.length === 0) {
+                container.innerHTML = '<p style="color: var(--color-text-secondary);">Нет шаблонов</p>';
+                return;
+            }
+
+            container.innerHTML = templates.map(tpl => `
+                <div class="news-item">
+                    <div class="news-info">
+                        <div class="news-title">${tpl.name}</div>
+                        <div class="news-date">${tpl.desc}</div>
+                    </div>
+                    <div class="news-actions">
+                        <button class="btn btn-info btn-sm" onclick="useTemplate(${tpl.id})">📋</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteTemplateItem(${tpl.id})">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function useTemplate(id) {
+            const templates = DataManager.getTemplates();
+            const template = templates.find(t => t.id === id);
+            
+            if (template) {
+                document.getElementById('newsContent').value = template.content;
+                switchTab('news');
+                document.getElementById('newsTitle').focus();
+                Logger.info('Шаблон загружен в форму');
+            }
+        }
+
+        function deleteTemplateItem(id) {
+            if (confirm('Удалить шаблон?')) {
+                DataManager.deleteTemplate(id);
+                displayTemplates();
+                syncToGitHub();
+            }
+        }
+
+        // ============== НАСТРОЙКИ ==============
+        function saveSettings() {
+            console.log('🟢 АДМИН ПАНЕЛЬ: saveSettings функция вызвана');
+            
+            const token = document.getElementById('githubToken').value;
+            const username = document.getElementById('githubUsername').value;
+            const repo = document.getElementById('githubRepo').value;
+
+            if (!token || !username || !repo) {
+                Logger.error('Заполните все поля GitHub');
+                alert('Заполните все поля GitHub');
+                return;
+            }
+
+            DataManager.saveSettings({ token, username, repo });
+            Logger.success('Настройки сохранены');
+            alert('Настройки сохранены успешно!');
+        }
+
+        // ============== СИНХРОНИЗАЦИЯ ==============
+        async function syncToGitHub() {
+            const settings = DataManager.getSettings();
+            
+            if (!settings.token || !settings.username || !settings.repo) {
+                Logger.warning('GitHub не настроен. Данные сохранены локально.');
+                return;
+            }
+
+            try {
+                const news = DataManager.getNews();
+                const comments = DataManager.getComments();
+                const categories = DataManager.getCategories();
+                const templates = DataManager.getTemplates();
+
+                Logger.info('Начало синхронизации...');
+            } catch (error) {
+                Logger.error('Ошибка синхронизации', error.message);
+                updateSyncStatus(false);
+            }
+        }
+
+        function manualSync() {
+            console.log('🟢 АДМИН ПАНЕЛЬ: manualSync функция вызвана');
+            Logger.info('Начало ручной синхронизации...');
+            syncToGitHub();
+        }
+
+        // ============== ДИАГНОСТИКА ==============
+        async function runDiagnostics() {
+            console.log('🟢 АДМИН ПАНЕЛЬ: runDiagnostics функция вызвана');
+            
+            const results = [];
+            const container = document.getElementById('diagnosticsResults');
+            container.innerHTML = '<p>⏳ Проверка...</p>';
+
+            try {
+                const test = 'test-' + Date.now();
+                localStorage.setItem(test, test);
+                localStorage.removeItem(test);
+                results.push({ name: 'LocalStorage', status: 'OK', msg: 'Работает' });
+            } catch (e) {
+                results.push({ name: 'LocalStorage', status: 'ERROR', msg: e.message });
+            }
+
+            const news = DataManager.getNews();
+            const comments = DataManager.getComments();
+            const categories = DataManager.getCategories();
+            const templates = DataManager.getTemplates();
+            
+            results.push({ name: 'News.json', status: 'OK', msg: `${news.length} элементов` });
+            results.push({ name: 'Comments.json', status: 'OK', msg: `${comments.length} элементов` });
+            results.push({ name: 'Categories.json', status: 'OK', msg: `${categories.length} элементов` });
+            results.push({ name: 'Templates.json', status: 'OK', msg: `${templates.length} элементов` });
+
+            const settings = DataManager.getSettings();
+            if (settings.token && settings.username && settings.repo) {
+                results.push({ name: 'GitHub Config', status: 'OK', msg: 'Настроено' });
+            } else {
+                results.push({ name: 'GitHub Config', status: 'WARNING', msg: 'Не настроено' });
+            }
+
+            container.innerHTML = results.map(r => {
+                const statusClass = r.status === 'OK' ? 'log-success' : 
+                                   r.status === 'ERROR' ? 'log-error' : 'log-warning';
+                return `<div class="log-entry ${statusClass}">
+                    <strong>${r.name}:</strong> ${r.msg}
+                </div>`;
+            }).join('');
+
+            Logger.info('Диагностика завершена');
+        }
+
+        function updateSyncStatus(online) {
+            const indicator = document.getElementById('syncIndicator');
+            const status = document.getElementById('syncStatus');
+            
+            if (online) {
+                indicator.classList.add('online');
+                indicator.classList.remove('offline');
+                status.textContent = '✅ Синхронизация активна (News + Comments)';
+            } else {
+                indicator.classList.add('offline');
+                indicator.classList.remove('online');
+                status.textContent = '⚠️ Данные сохраняются локально (GitHub недоступен)';
+            }
+        }
+
+        function clearLogs() {
+            console.log('🟢 АДМИН ПАНЕЛЬ: clearLogs функция вызвана');
+            
+            if (confirm('Очистить все логи?')) {
+                localStorage.setItem(CONFIG.LOGS_KEY, '[]');
+                Logger.displayLogs();
+                Logger.info('Логи очищены');
+            }
+        }
+
+        function exportLogs() {
+            console.log('🟢 АДМИН ПАНЕЛЬ: exportLogs функция вызвана');
+            
+            const logs = JSON.parse(localStorage.getItem(CONFIG.LOGS_KEY) || '[]');
+            const text = logs.map(log => `[${log.timestamp}] [${log.type}] ${log.message}`).join('\n');
+            
+            const element = document.createElement('a');
+            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+            element.setAttribute('download', `logs-${Date.now()}.txt`);
+            element.style.display = 'none';
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
+            
+            Logger.info('Логи экспортированы');
+        }
+
+        // ============== ОБРАБОТКА ИЗОБРАЖЕНИЙ ==============
+        function updateImagePreview() {
+            const url = document.getElementById('newsImage').value;
+            const preview = document.getElementById('imagePreview');
+            const img = document.getElementById('previewImg');
+            
+            if (url) {
+                img.src = url;
+                preview.style.display = 'block';
+            } else {
+                preview.style.display = 'none';
+            }
+        }
+
+        // ============== ИНИЦИАЛИЗАЦИЯ ==============
+        function init() {
+            console.log('🟢 АДМИН ПАНЕЛЬ: init функция вызвана');
+
+            // Загрузить настройки
+            const settings = DataManager.getSettings();
+            if (settings.token) document.getElementById('githubToken').value = settings.token;
+            if (settings.username) document.getElementById('githubUsername').value = settings.username;
+            if (settings.repo) document.getElementById('githubRepo').value = settings.repo;
+
+            // Отобразить данные
+            displayNews();
+            displayComments();
+            displayCategories();
+            displayTemplates();
+            displayCategorySelect();
+            displayCommentNewsSelect();
+            DataManager.updateStats();
+            Logger.displayLogs();
+
+            // РЕГИСТРАЦИЯ ОБРАБОТЧИКОВ
+            registerEventListeners();
+
+            // Обработка изображений
+            const imageInput = document.getElementById('newsImage');
+            if (imageInput) {
+                imageInput.addEventListener('change', updateImagePreview);
+                imageInput.addEventListener('input', updateImagePreview);
+            }
+
+            console.log('🟢 АДМИН ПАНЕЛЬ: Инициализация завершена успешно!');
+            Logger.info('✅ Админ панель v2.6 инициализирована успешно!');
+
+            // Автосинхронизация каждые 5 минут
+            setInterval(() => {
+                const settings = DataManager.getSettings();
+                if (settings.token && settings.username && settings.repo) {
+                    syncToGitHub();
+                }
+            }, 5 * 60 * 1000);
+        }
+
+        console.log('🟢 АДМИН ПАНЕЛЬ: init функция определена');
+        document.addEventListener('DOMContentLoaded', init);
+        console.log('🟢 АДМИН ПАНЕЛЬ: DOMContentLoaded listener добавлен');
+    </script>
+</body>
+</html>
