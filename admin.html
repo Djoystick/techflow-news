@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🎛️ Админ панель v2.6 - TechFlow News</title>
     
-    <!-- 🔴 ПОДКЛЮЧИТЬ ОБРАБОТЧИК ОШИБОК ПЕРВЫМ! -->
+    <!-- Error Debug Handler -->
     <script src="error-debug-v1.js" defer></script>
     
     <style>
@@ -391,7 +391,6 @@
             color: var(--color-primary);
         }
 
-        /* Верхняя кнопка для показа ошибок */
         .debug-button {
             position: fixed;
             top: 20px;
@@ -415,10 +414,6 @@
         .debug-button:hover {
             background: #da190b;
             transform: scale(1.1);
-        }
-
-        .debug-button:active {
-            transform: scale(0.95);
         }
 
         @media (max-width: 768px) {
@@ -456,7 +451,7 @@
     </style>
 </head>
 <body>
-    <!-- 🔴 КНОПКА ОТЛАДКИ ОШИБОК -->
+    <!-- Error Debug Button -->
     <button class="debug-button" onclick="window.errorDebug.showPanel()" title="Показать ошибки">🔴</button>
 
     <header>
@@ -688,8 +683,6 @@
     </div>
 
     <script>
-        console.log('🟢 АДМИН ПАНЕЛЬ: Скрипт загружается...');
-
         // ============== КОНФИГУРАЦИЯ ==============
         const CONFIG = {
             NEWS_KEY: 'news-data',
@@ -699,8 +692,6 @@
             SETTINGS_KEY: 'github-settings',
             LOGS_KEY: 'admin-logs'
         };
-
-        console.log('🟢 АДМИН ПАНЕЛЬ: CONFIG инициализирован');
 
         // ============== ЛОГИРОВАНИЕ ==============
         const Logger = {
@@ -728,8 +719,6 @@
                 const logs = JSON.parse(localStorage.getItem(CONFIG.LOGS_KEY) || '[]');
                 const container = document.getElementById('logsContainer');
                 
-                if (!container) return;
-                
                 container.innerHTML = logs.map(log => {
                     const className = `log-${log.type.toLowerCase()}`;
                     return `<div class="log-entry ${className}">
@@ -740,8 +729,6 @@
                 container.scrollTop = container.scrollHeight;
             }
         };
-
-        console.log('🟢 АДМИН ПАНЕЛЬ: Logger инициализирован');
 
         // ============== УПРАВЛЕНИЕ ДАННЫМИ ==============
         const DataManager = {
@@ -882,26 +869,16 @@
                 const categories = this.getCategories();
                 const templates = this.getTemplates();
 
-                const newsElem = document.getElementById('statsNews');
-                const commentsElem = document.getElementById('statsComments');
-                const categoriesElem = document.getElementById('statsCategories');
-                const templatesElem = document.getElementById('statsTemplates');
-                const lastUpdateElem = document.getElementById('statsLastUpdate');
-
-                if (newsElem) newsElem.textContent = news.length;
-                if (commentsElem) commentsElem.textContent = comments.length;
-                if (categoriesElem) categoriesElem.textContent = categories.length;
-                if (templatesElem) templatesElem.textContent = templates.length;
-                if (lastUpdateElem) lastUpdateElem.textContent = new Date().toLocaleString('ru-RU');
+                document.getElementById('statsNews').textContent = news.length;
+                document.getElementById('statsComments').textContent = comments.length;
+                document.getElementById('statsCategories').textContent = categories.length;
+                document.getElementById('statsTemplates').textContent = templates.length;
+                document.getElementById('statsLastUpdate').textContent = new Date().toLocaleString('ru-RU');
             }
         };
 
-        console.log('🟢 АДМИН ПАНЕЛЬ: DataManager инициализирован');
-
         // ============== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ==============
         function switchTab(tabName) {
-            console.log('🟢 АДМИН ПАНЕЛЬ: switchTab вызвана с', tabName);
-            
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
             });
@@ -927,120 +904,8 @@
             Logger.info(`Переключение на вкладку: ${tabName}`);
         }
 
-        console.log('🟢 АДМИН ПАНЕЛЬ: switchTab функция определена');
-
-        // ============== РЕГИСТРАЦИЯ ВСЕХ ОБРАБОТЧИКОВ ==============
-        function registerEventListeners() {
-            console.log('🟢 АДМИН ПАНЕЛЬ: registerEventListeners вызвана');
-
-            // Вкладки
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const tabName = this.getAttribute('data-tab');
-                    console.log('🟢 АДМИН ПАНЕЛЬ: Клик по вкладке', tabName);
-                    switchTab(tabName);
-                });
-            });
-            console.log('🟢 АДМИН ПАНЕЛЬ: Event listeners для вкладок зарегистрированы');
-
-            // Новости
-            const addNewsBtn = document.getElementById('addNewsBtn');
-            if (addNewsBtn) {
-                addNewsBtn.addEventListener('click', function() {
-                    console.log('🟢 АДМИН ПАНЕЛЬ: Клик по кнопке добавления новости');
-                    addNews();
-                });
-                console.log('🟢 АДМИН ПАНЕЛЬ: addNewsBtn зарегистрирован');
-            }
-
-            // Комментарии
-            const addCommentBtn = document.getElementById('addCommentBtn');
-            if (addCommentBtn) {
-                addCommentBtn.addEventListener('click', function() {
-                    console.log('🟢 АДМИН ПАНЕЛЬ: Клик по кнопке добавления комментария');
-                    addComment();
-                });
-                console.log('🟢 АДМИН ПАНЕЛЬ: addCommentBtn зарегистрирован');
-            }
-
-            // Категории
-            const addCategoryBtn = document.getElementById('addCategoryBtn');
-            if (addCategoryBtn) {
-                addCategoryBtn.addEventListener('click', function() {
-                    console.log('🟢 АДМИН ПАНЕЛЬ: Клик по кнопке добавления категории');
-                    addCategory();
-                });
-                console.log('🟢 АДМИН ПАНЕЛЬ: addCategoryBtn зарегистрирован');
-            }
-
-            // Шаблоны
-            const addTemplateBtn = document.getElementById('addTemplateBtn');
-            if (addTemplateBtn) {
-                addTemplateBtn.addEventListener('click', function() {
-                    console.log('🟢 АДМИН ПАНЕЛЬ: Клик по кнопке добавления шаблона');
-                    addTemplate();
-                });
-                console.log('🟢 АДМИН ПАНЕЛЬ: addTemplateBtn зарегистрирован');
-            }
-
-            // Настройки
-            const saveSettingsBtn = document.getElementById('saveSettingsBtn');
-            if (saveSettingsBtn) {
-                saveSettingsBtn.addEventListener('click', function() {
-                    console.log('🟢 АДМИН ПАНЕЛЬ: Клик по кнопке сохранения настроек');
-                    saveSettings();
-                });
-                console.log('🟢 АДМИН ПАНЕЛЬ: saveSettingsBtn зарегистрирован');
-            }
-
-            // Синхронизация
-            const manualSyncBtn = document.getElementById('manualSyncBtn');
-            if (manualSyncBtn) {
-                manualSyncBtn.addEventListener('click', function() {
-                    console.log('🟢 АДМИН ПАНЕЛЬ: Клик по кнопке синхронизации');
-                    manualSync();
-                });
-                console.log('🟢 АДМИН ПАНЕЛЬ: manualSyncBtn зарегистрирован');
-            }
-
-            // Диагностика
-            const runDiagnosticsBtn = document.getElementById('runDiagnosticsBtn');
-            if (runDiagnosticsBtn) {
-                runDiagnosticsBtn.addEventListener('click', function() {
-                    console.log('🟢 АДМИН ПАНЕЛЬ: Клик по кнопке диагностики');
-                    runDiagnostics();
-                });
-                console.log('🟢 АДМИН ПАНЕЛЬ: runDiagnosticsBtn зарегистрирован');
-            }
-
-            // Логи
-            const clearLogsBtn = document.getElementById('clearLogsBtn');
-            if (clearLogsBtn) {
-                clearLogsBtn.addEventListener('click', function() {
-                    console.log('🟢 АДМИН ПАНЕЛЬ: Клик по кнопке очистки логов');
-                    clearLogs();
-                });
-                console.log('🟢 АДМИН ПАНЕЛЬ: clearLogsBtn зарегистрирован');
-            }
-
-            const exportLogsBtn = document.getElementById('exportLogsBtn');
-            if (exportLogsBtn) {
-                exportLogsBtn.addEventListener('click', function() {
-                    console.log('🟢 АДМИН ПАНЕЛЬ: Клик по кнопке экспорта логов');
-                    exportLogs();
-                });
-                console.log('🟢 АДМИН ПАНЕЛЬ: exportLogsBtn зарегистрирован');
-            }
-
-            Logger.success('Все обработчики событий зарегистрированы ✅');
-        }
-
-        console.log('🟢 АДМИН ПАНЕЛЬ: registerEventListeners функция определена');
-
         // ============== НОВОСТИ ==============
         function addNews() {
-            console.log('🟢 АДМИН ПАНЕЛЬ: addNews функция вызвана');
-            
             const title = document.getElementById('newsTitle').value;
             const excerpt = document.getElementById('newsExcerpt').value;
             const content = document.getElementById('newsContent').value;
@@ -1117,8 +982,6 @@
 
         // ============== КОММЕНТАРИИ ==============
         function addComment() {
-            console.log('🟢 АДМИН ПАНЕЛЬ: addComment функция вызвана');
-            
             const newsId = document.getElementById('commentNewsId').value;
             const author = document.getElementById('commentAuthor').value;
             const email = document.getElementById('commentEmail').value;
@@ -1189,8 +1052,6 @@
 
         // ============== КАТЕГОРИИ ==============
         function addCategory() {
-            console.log('🟢 АДМИН ПАНЕЛЬ: addCategory функция вызвана');
-            
             const id = document.getElementById('catId').value;
             const name = document.getElementById('catName').value;
             const emoji = document.getElementById('catEmoji').value;
@@ -1258,8 +1119,6 @@
 
         // ============== ШАБЛОНЫ ==============
         function addTemplate() {
-            console.log('🟢 АДМИН ПАНЕЛЬ: addTemplate функция вызвана');
-            
             const name = document.getElementById('tplName').value;
             const desc = document.getElementById('tplDesc').value;
             const content = document.getElementById('tplContent').value;
@@ -1325,8 +1184,6 @@
 
         // ============== НАСТРОЙКИ ==============
         function saveSettings() {
-            console.log('🟢 АДМИН ПАНЕЛЬ: saveSettings функция вызвана');
-            
             const token = document.getElementById('githubToken').value;
             const username = document.getElementById('githubUsername').value;
             const repo = document.getElementById('githubRepo').value;
@@ -1365,15 +1222,12 @@
         }
 
         function manualSync() {
-            console.log('🟢 АДМИН ПАНЕЛЬ: manualSync функция вызвана');
             Logger.info('Начало ручной синхронизации...');
             syncToGitHub();
         }
 
         // ============== ДИАГНОСТИКА ==============
         async function runDiagnostics() {
-            console.log('🟢 АДМИН ПАНЕЛЬ: runDiagnostics функция вызвана');
-            
             const results = [];
             const container = document.getElementById('diagnosticsResults');
             container.innerHTML = '<p>⏳ Проверка...</p>';
@@ -1431,8 +1285,6 @@
         }
 
         function clearLogs() {
-            console.log('🟢 АДМИН ПАНЕЛЬ: clearLogs функция вызвана');
-            
             if (confirm('Очистить все логи?')) {
                 localStorage.setItem(CONFIG.LOGS_KEY, '[]');
                 Logger.displayLogs();
@@ -1441,8 +1293,6 @@
         }
 
         function exportLogs() {
-            console.log('🟢 АДМИН ПАНЕЛЬ: exportLogs функция вызвана');
-            
             const logs = JSON.parse(localStorage.getItem(CONFIG.LOGS_KEY) || '[]');
             const text = logs.map(log => `[${log.timestamp}] [${log.type}] ${log.message}`).join('\n');
             
@@ -1471,17 +1321,61 @@
             }
         }
 
+        // ============== РЕГИСТРАЦИЯ ВСЕХ ОБРАБОТЧИКОВ ==============
+        function registerEventListeners() {
+            // Вкладки
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const tabName = this.getAttribute('data-tab');
+                    switchTab(tabName);
+                });
+            });
+
+            // Новости
+            const addNewsBtn = document.getElementById('addNewsBtn');
+            if (addNewsBtn) addNewsBtn.addEventListener('click', addNews);
+
+            // Комментарии
+            const addCommentBtn = document.getElementById('addCommentBtn');
+            if (addCommentBtn) addCommentBtn.addEventListener('click', addComment);
+
+            // Категории
+            const addCategoryBtn = document.getElementById('addCategoryBtn');
+            if (addCategoryBtn) addCategoryBtn.addEventListener('click', addCategory);
+
+            // Шаблоны
+            const addTemplateBtn = document.getElementById('addTemplateBtn');
+            if (addTemplateBtn) addTemplateBtn.addEventListener('click', addTemplate);
+
+            // Настройки
+            const saveSettingsBtn = document.getElementById('saveSettingsBtn');
+            if (saveSettingsBtn) saveSettingsBtn.addEventListener('click', saveSettings);
+
+            // Синхронизация
+            const manualSyncBtn = document.getElementById('manualSyncBtn');
+            if (manualSyncBtn) manualSyncBtn.addEventListener('click', manualSync);
+
+            // Диагностика
+            const runDiagnosticsBtn = document.getElementById('runDiagnosticsBtn');
+            if (runDiagnosticsBtn) runDiagnosticsBtn.addEventListener('click', runDiagnostics);
+
+            // Логи
+            const clearLogsBtn = document.getElementById('clearLogsBtn');
+            if (clearLogsBtn) clearLogsBtn.addEventListener('click', clearLogs);
+
+            const exportLogsBtn = document.getElementById('exportLogsBtn');
+            if (exportLogsBtn) exportLogsBtn.addEventListener('click', exportLogs);
+
+            Logger.success('Все обработчики событий зарегистрированы');
+        }
+
         // ============== ИНИЦИАЛИЗАЦИЯ ==============
         function init() {
-            console.log('🟢 АДМИН ПАНЕЛЬ: init функция вызвана');
-
-            // Загрузить настройки
             const settings = DataManager.getSettings();
             if (settings.token) document.getElementById('githubToken').value = settings.token;
             if (settings.username) document.getElementById('githubUsername').value = settings.username;
             if (settings.repo) document.getElementById('githubRepo').value = settings.repo;
 
-            // Отобразить данные
             displayNews();
             displayComments();
             displayCategories();
@@ -1491,20 +1385,16 @@
             DataManager.updateStats();
             Logger.displayLogs();
 
-            // РЕГИСТРАЦИЯ ОБРАБОТЧИКОВ
             registerEventListeners();
 
-            // Обработка изображений
             const imageInput = document.getElementById('newsImage');
             if (imageInput) {
                 imageInput.addEventListener('change', updateImagePreview);
                 imageInput.addEventListener('input', updateImagePreview);
             }
 
-            console.log('🟢 АДМИН ПАНЕЛЬ: Инициализация завершена успешно!');
             Logger.info('✅ Админ панель v2.6 инициализирована успешно!');
 
-            // Автосинхронизация каждые 5 минут
             setInterval(() => {
                 const settings = DataManager.getSettings();
                 if (settings.token && settings.username && settings.repo) {
@@ -1513,9 +1403,11 @@
             }, 5 * 60 * 1000);
         }
 
-        console.log('🟢 АДМИН ПАНЕЛЬ: init функция определена');
-        document.addEventListener('DOMContentLoaded', init);
-        console.log('🟢 АДМИН ПАНЕЛЬ: DOMContentLoaded listener добавлен');
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
     </script>
 </body>
 </html>
