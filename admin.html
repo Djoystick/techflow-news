@@ -1157,15 +1157,15 @@
             DataManager.updateStats();
         }
 
-        // Запускаем при загрузке страницы
-        window.addEventListener('load', init);
-
         // ✅ ЭКСПОРТ ФУНКЦИЙ В ГЛОБАЛЬНУЮ ОБЛАСТЬ ДЛЯ onclick
         window.deleteNewsItem = deleteNewsItem;
         window.deleteCommentItem = deleteCommentItem;
         window.deleteCategoryItem = deleteCategoryItem;
         window.deleteTemplateItem = deleteTemplateItem;
         window.useTemplate = useTemplate;
+
+        // Запускаем при загрузке страницы
+        window.addEventListener('load', init);
     </script>
 </body>
 </html>
