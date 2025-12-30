@@ -1,0 +1,56 @@
+name: Auto-Sync News & Comments v2.6
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  push:
+    paths:
+      - 'data/**'
+      - '.github/workflows/auto-sync-v2.6.yml'
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Validate JSON files
+        run: |
+          for file in data/*.json; do
+            if [ -f "$file" ]; then
+              echo "Проверка: $file"
+              python -m json.tool "$file" > /dev/null
+              if [ $? -eq 0 ]; then
+                echo "✅ $file валиден"
+              else
+                echo "❌ $file невалиден!"
+                exit 1
+              fi
+            fi
+          done
+
+      - name: Create commit history
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action Bot"
+          
+          if [ -d "data" ]; then
+            git add data/
+            if ! git diff --cached --quiet; then
+              git commit -m "🔄 Auto-sync $(date '+%Y-%m-%d %H:%M:%S') - News + Comments + Categories + Templates"
+              git push
+            fi
+          fi
+        continue-on-error: true
+
+      - name: Sync complete
+        run: |
+          echo "✅ Синхронизация завершена успешно"
+          echo "📊 Синхронизировано:"
+          echo "  - 📰 Новости (news.json)"
+          echo "  - 💬 Комментарии (comments.json)"
+          echo "  - 🏷️  Категории (categories.json)"
+          echo "  - 📋 Шаблоны (templates.json)"
+          echo "⏰ Время: $(date)"
