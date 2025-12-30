@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TechFlow Admin Panel v2.3</title>
+    <title>TechFlow Admin Panel v2.4 - FIXED</title>
     <style>
         * {
             margin: 0;
@@ -16,6 +16,7 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: #333;
             min-height: 100vh;
+            padding-bottom: 50px;
         }
 
         .admin-container {
@@ -24,7 +25,6 @@
             padding: 20px;
         }
 
-        /* ===== HEADER ===== */
         .admin-header {
             background: white;
             padding: 20px;
@@ -68,7 +68,6 @@
             transform: translateY(-2px);
         }
 
-        /* ===== НАВИГАЦИЯ ===== */
         .admin-nav {
             display: flex;
             gap: 10px;
@@ -99,7 +98,6 @@
             border-color: #667eea;
         }
 
-        /* ===== КОНТЕНТ СЕКЦИЙ ===== */
         .tab-content {
             display: none;
             background: white;
@@ -118,7 +116,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* ===== ФОРМА ===== */
         .form-group {
             margin-bottom: 20px;
         }
@@ -156,7 +153,6 @@
             min-height: 150px;
         }
 
-        /* ===== КНОПКИ ФОРМЫ ===== */
         .form-buttons {
             display: flex;
             gap: 15px;
@@ -209,10 +205,45 @@
             min-width: auto;
         }
 
-        /* ===== НОВОСТЕЙ ===== */
-        .news-list {
-            max-height: 600px;
-            overflow-y: auto;
+        .status-message {
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .status-message.show {
+            display: block;
+            animation: slideDown 0.3s ease-in-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .status-message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status-message.warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .status-message.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
         }
 
         .news-item {
@@ -252,7 +283,6 @@
             gap: 10px;
         }
 
-        /* ===== ШАБЛОНЫ ===== */
         .templates-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -289,82 +319,6 @@
             line-height: 1.5;
         }
 
-        .template-btn {
-            background: #667eea;
-            color: white;
-            padding: 8px 16px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 12px;
-            width: 100%;
-        }
-
-        .template-btn:hover {
-            background: #764ba2;
-        }
-
-        /* ===== СТАТУС СООБЩЕНИЯ ===== */
-        .status-message {
-            padding: 15px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            display: none;
-            animation: slideDown 0.3s ease-in-out;
-        }
-
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .status-message.show {
-            display: block;
-        }
-
-        .status-message.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .status-message.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        .status-message.warning {
-            background: #fff3cd;
-            color: #856404;
-            border: 1px solid #ffeaa7;
-        }
-
-        /* ===== ТАБЛИЦА НАСТРОЕК ===== */
-        .settings-table {
-            width: 100%;
-        }
-
-        .settings-row {
-            display: grid;
-            grid-template-columns: 200px 1fr;
-            gap: 20px;
-            margin-bottom: 20px;
-            align-items: start;
-        }
-
-        .settings-label {
-            font-weight: 600;
-            color: #333;
-        }
-
-        .settings-value {
-            font-size: 13px;
-            color: #666;
-        }
-
-        /* ===== ДИАГНОСТИКА ===== */
         .diagnostic-item {
             background: #f9f9f9;
             padding: 15px;
@@ -422,7 +376,21 @@
             color: white;
         }
 
-        /* ===== ЛОГИ ===== */
+        .diagnostic-details {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            color: #666;
+            word-break: break-all;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .diagnostic-details.show {
+            display: block;
+        }
+
         .logs-container {
             background: #1e1e1e;
             color: #00ff00;
@@ -435,157 +403,79 @@
             white-space: pre-wrap;
             word-wrap: break-word;
             margin-bottom: 20px;
+            border: 1px solid #333;
         }
 
-        /* ===== GRID АДАПТИВНОСТЬ ===== */
-        @media (max-width: 1024px) {
-            .admin-container {
-                padding: 15px;
-            }
+        .log-entry {
+            padding: 5px 0;
+            border-bottom: 1px solid #333;
+        }
 
-            .admin-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
+        .log-entry.error {
+            color: #ff4444;
+        }
 
-            .admin-nav {
-                width: 100%;
-            }
+        .log-entry.warning {
+            color: #ffaa00;
+        }
 
-            .nav-btn {
-                flex: 1;
-                min-width: 100px;
-            }
+        .log-entry.success {
+            color: #00ff00;
+        }
 
-            .templates-grid {
-                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            }
+        .log-entry.info {
+            color: #00aaff;
+        }
 
-            .settings-row {
-                grid-template-columns: 1fr;
-            }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
 
-            .news-item {
-                flex-direction: column;
-            }
+        .category-list {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
 
-            .news-item-actions {
-                width: 100%;
-            }
+        .category-item {
+            background: white;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .category-emoji {
+            font-size: 18px;
+            margin-right: 10px;
         }
 
         @media (max-width: 768px) {
-            .admin-container {
-                padding: 10px;
-            }
-
-            .tab-content {
-                padding: 20px;
-            }
-
-            .admin-header {
-                padding: 15px;
-            }
-
-            .admin-title {
-                font-size: 18px;
-            }
-
-            .admin-nav {
-                gap: 5px;
-            }
-
-            .nav-btn {
-                padding: 10px 12px;
-                font-size: 12px;
-                min-width: 80px;
-            }
-
-            .templates-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .form-buttons {
-                flex-direction: column;
-            }
-
-            .btn {
-                width: 100%;
-            }
-
-            .news-item-actions {
-                width: 100%;
-                flex-direction: column;
-            }
-
-            .btn-small {
-                width: 100%;
-            }
-
-            .diagnostic-item {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .diagnostic-status {
-                width: 100%;
-                text-align: center;
-            }
+            .admin-container { padding: 15px; }
+            .tab-content { padding: 20px; }
+            .admin-header { flex-direction: column; align-items: flex-start; }
+            .admin-nav { width: 100%; }
+            .nav-btn { flex: 1; min-width: 100px; }
+            .form-buttons { flex-direction: column; }
+            .btn { width: 100%; }
+            .grid-2 { grid-template-columns: 1fr; }
+            .news-item { flex-direction: column; }
+            .news-item-actions { width: 100%; }
         }
 
         @media (max-width: 480px) {
-            .admin-container {
-                padding: 5px;
-            }
-
-            .tab-content {
-                padding: 15px;
-            }
-
-            .admin-header {
-                padding: 10px;
-                gap: 10px;
-            }
-
-            .admin-title {
-                font-size: 16px;
-            }
-
-            .admin-version {
-                font-size: 10px;
-            }
-
-            .logout-btn {
-                padding: 8px 12px;
-                font-size: 12px;
-                min-width: auto;
-            }
-
-            .nav-btn {
-                padding: 8px 10px;
-                font-size: 11px;
-                min-width: 70px;
-                flex: 1;
-            }
-
-            .form-input,
-            .form-textarea,
-            .form-select {
-                padding: 10px;
-                font-size: 13px;
-            }
-
-            .form-label {
-                font-size: 12px;
-            }
-
-            .btn {
-                padding: 10px 16px;
-                font-size: 12px;
-            }
+            .admin-container { padding: 10px; }
+            .tab-content { padding: 15px; }
+            .admin-title { font-size: 16px; }
+            .nav-btn { padding: 8px 10px; font-size: 11px; min-width: 70px; }
         }
 
-        /* ===== LOADING SPINNER ===== */
         .spinner {
             display: inline-block;
             width: 20px;
@@ -600,31 +490,25 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-
-        .hidden {
-            display: none !important;
-        }
     </style>
 </head>
 <body>
     <div class="admin-container">
-        <!-- HEADER -->
         <div class="admin-header">
             <div>
                 <div class="admin-title">📰 TechFlow Admin Panel</div>
-                <div class="admin-version">v2.3 - GitHub Fixed + Templates</div>
+                <div class="admin-version">v2.4 - FULLY FIXED</div>
             </div>
             <button class="logout-btn" onclick="logout()">🚪 Выход</button>
         </div>
 
-        <!-- STATUS MESSAGE -->
         <div id="statusMessage" class="status-message"></div>
 
-        <!-- НАВИГАЦИЯ -->
         <div class="admin-nav">
             <button class="nav-btn active" onclick="switchTab('add-news')">➕ Добавить</button>
             <button class="nav-btn" onclick="switchTab('manage-news')">✏️ Управление</button>
             <button class="nav-btn" onclick="switchTab('templates')">📋 Шаблоны</button>
+            <button class="nav-btn" onclick="switchTab('categories')">🏷️ Категории</button>
             <button class="nav-btn" onclick="switchTab('settings')">⚙️ Настройки</button>
             <button class="nav-btn" onclick="switchTab('diagnostics')">🔧 Диагностика</button>
         </div>
@@ -648,7 +532,7 @@
                 <textarea id="newsFullText" class="form-textarea" placeholder="Полный текст новости..."></textarea>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div class="grid-2">
                 <div class="form-group">
                     <label class="form-label">🖼️ Изображение URL</label>
                     <input type="text" id="newsImage" class="form-input" placeholder="https://example.com/image.jpg">
@@ -656,17 +540,11 @@
 
                 <div class="form-group">
                     <label class="form-label">🏷️ Категория</label>
-                    <select id="newsCategory" class="form-select">
-                        <option value="ai">🤖 ИИ</option>
-                        <option value="gadgets">📱 Гаджеты</option>
-                        <option value="software">💻 ПО</option>
-                        <option value="hardware">🔧 Железо</option>
-                        <option value="crypto">💰 Крипто</option>
-                    </select>
+                    <select id="newsCategory" class="form-select"></select>
                 </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div class="grid-2">
                 <div class="form-group">
                     <label class="form-label">👤 Автор</label>
                     <input type="text" id="newsAuthor" class="form-input" placeholder="Имя автора...">
@@ -693,10 +571,8 @@
         <!-- 2️⃣ УПРАВЛЕНИЕ НОВОСТЯМИ -->
         <div id="manage-news" class="tab-content">
             <h2 style="margin-bottom: 20px;">✏️ Управление новостями</h2>
-
             <input type="text" id="searchNews" class="form-input" placeholder="🔍 Поиск по названию..." style="margin-bottom: 20px;">
-
-            <div class="news-list" id="newsList">
+            <div class="news-item" id="newsList" style="display: block;">
                 <p style="text-align: center; color: #999; padding: 40px;">Загружаю новости...</p>
             </div>
         </div>
@@ -704,47 +580,93 @@
         <!-- 3️⃣ ШАБЛОНЫ -->
         <div id="templates" class="tab-content">
             <h2 style="margin-bottom: 20px;">📋 Шаблоны статей</h2>
-            <p style="color: #666; margin-bottom: 20px;">Выберите шаблон для быстрого создания статьи с заготовленным текстом</p>
 
+            <div style="margin-bottom: 30px;">
+                <h3 style="margin-bottom: 15px;">📝 Создать новый шаблон</h3>
+                <div class="form-group">
+                    <label class="form-label">Название шаблона</label>
+                    <input type="text" id="templateName" class="form-input" placeholder="Например: Обзор продукта">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Описание</label>
+                    <input type="text" id="templateDesc" class="form-input" placeholder="Описание шаблона...">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Текст шаблона</label>
+                    <textarea id="templateContent" class="form-textarea" placeholder="Содержимое шаблона..."></textarea>
+                </div>
+                <button class="btn btn-primary" onclick="createTemplate()">➕ Создать шаблон</button>
+            </div>
+
+            <hr style="margin: 30px 0;">
+
+            <h3 style="margin-bottom: 15px;">📋 Доступные шаблоны</h3>
             <div class="templates-grid" id="templatesGrid"></div>
         </div>
 
-        <!-- 4️⃣ НАСТРОЙКИ -->
+        <!-- 4️⃣ КАТЕГОРИИ -->
+        <div id="categories" class="tab-content">
+            <h2 style="margin-bottom: 20px;">🏷️ Управление категориями</h2>
+
+            <div style="margin-bottom: 30px;">
+                <h3 style="margin-bottom: 15px;">➕ Добавить новую категорию</h3>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label class="form-label">ID категории</label>
+                        <input type="text" id="categoryId" class="form-input" placeholder="ai, gadgets, software...">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Название</label>
+                        <input type="text" id="categoryName" class="form-input" placeholder="Искусственный интеллект...">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Эмодзи</label>
+                    <input type="text" id="categoryEmoji" class="form-input" placeholder="🤖">
+                </div>
+                <button class="btn btn-primary" onclick="addCategory()">➕ Добавить</button>
+            </div>
+
+            <hr style="margin: 30px 0;">
+
+            <h3 style="margin-bottom: 15px;">📋 Список категорий</h3>
+            <div class="category-list" id="categoriesList"></div>
+        </div>
+
+        <!-- 5️⃣ НАСТРОЙКИ -->
         <div id="settings" class="tab-content">
             <h2 style="margin-bottom: 20px;">⚙️ Настройки</h2>
 
             <div class="form-group">
                 <label class="form-label">🔑 GitHub Token</label>
                 <input type="password" id="githubToken" class="form-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
-                <small style="color: #999;">Скопируйте токен из GitHub Settings → Developer Settings → Personal Access Tokens</small>
+                <small style="color: #999;">Получите токен на GitHub → Settings → Developer settings → Personal Access Tokens</small>
             </div>
 
-            <button class="btn btn-primary" onclick="saveToken()">💾 Сохранить токен</button>
+            <div class="form-group">
+                <label class="form-label">👤 GitHub Username</label>
+                <input type="text" id="githubUsername" class="form-input" placeholder="ваше_имя_на_github">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">📂 Имя репозитория</label>
+                <input type="text" id="githubRepo" class="form-input" placeholder="techflow-news">
+            </div>
+
+            <button class="btn btn-primary" onclick="saveSettings()">💾 Сохранить</button>
 
             <hr style="margin: 30px 0;">
 
             <h3 style="margin-bottom: 20px;">📊 Статистика</h3>
-            <div class="settings-table">
-                <div class="settings-row">
-                    <div class="settings-label">📰 Всего новостей:</div>
-                    <div class="settings-value" id="totalNews">0</div>
-                </div>
-                <div class="settings-row">
-                    <div class="settings-label">💬 Всего комментариев:</div>
-                    <div class="settings-value" id="totalComments">0</div>
-                </div>
-                <div class="settings-row">
-                    <div class="settings-label">📁 Размер хранилища:</div>
-                    <div class="settings-value" id="storageSize">0 B</div>
-                </div>
-                <div class="settings-row">
-                    <div class="settings-label">🕐 Последнее обновление:</div>
-                    <div class="settings-value" id="lastUpdate">-</div>
-                </div>
+            <div>
+                <div style="margin-bottom: 15px;"><strong>📰 Новостей:</strong> <span id="totalNews">0</span></div>
+                <div style="margin-bottom: 15px;"><strong>💬 Комментариев:</strong> <span id="totalComments">0</span></div>
+                <div style="margin-bottom: 15px;"><strong>📁 Размер:</strong> <span id="storageSize">0 B</span></div>
+                <div><strong>🕐 Обновлено:</strong> <span id="lastUpdate">-</span></div>
             </div>
         </div>
 
-        <!-- 5️⃣ ДИАГНОСТИКА -->
+        <!-- 6️⃣ ДИАГНОСТИКА -->
         <div id="diagnostics" class="tab-content">
             <h2 style="margin-bottom: 20px;">🔧 Диагностика системы</h2>
             <button class="btn btn-primary" onclick="runDiagnostics()" style="margin-bottom: 20px;">🔄 Запустить диагностику</button>
@@ -753,8 +675,8 @@
 
             <hr style="margin: 30px 0;">
 
-            <h3 style="margin-bottom: 20px;">🐛 Логи ошибок</h3>
-            <div class="logs-container" id="logsContainer">Логи ошибок появятся здесь...</div>
+            <h3 style="margin-bottom: 15px;">🐛 Логи системы</h3>
+            <div class="logs-container" id="logsContainer">Логи появятся здесь...</div>
 
             <div class="form-buttons">
                 <button class="btn btn-primary" onclick="downloadLogs()">📥 Скачать логи</button>
@@ -767,17 +689,62 @@
         // ===== ПЕРЕМЕННЫЕ ГЛОБАЛЬНЫЕ =====
         let allNews = [];
         let allComments = {};
-        let githubToken = localStorage.getItem('techflow_github_token') || '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';
-        let errorLogs = [];
+        let allCategories = [];
+        let allTemplates = [];
+        let systemLogs = [];
 
-        // GitHub config
-        const GITHUB_USERNAME = 'Djoystick'; // Измените на ваше имя
-        const GITHUB_REPO = 'techflow-news'; // Измените на ваш репозиторий
-        const GITHUB_BRANCH = 'main';
+        const GITHUB_API_URL = 'https://api.github.com';
+
+        // Загружаем из localStorage или используем значения по умолчанию
+        let githubToken = localStorage.getItem('techflow_github_token') || '';
+        let githubUsername = localStorage.getItem('techflow_github_username') || '';
+        let githubRepo = localStorage.getItem('techflow_github_repo') || 'techflow-news';
+
+        // ===== ЛОГИРОВАНИЕ =====
+        function addLog(type, message, details = '') {
+            const timestamp = new Date().toLocaleTimeString('ru-RU');
+            const logEntry = {
+                time: timestamp,
+                type: type,
+                message: message,
+                details: details
+            };
+            
+            systemLogs.unshift(logEntry);
+            if (systemLogs.length > 200) systemLogs.pop();
+            
+            console.log(`[${type}] ${message}`, details);
+            updateLogsDisplay();
+        }
+
+        function updateLogsDisplay() {
+            const container = document.getElementById('logsContainer');
+            if (systemLogs.length === 0) {
+                container.innerHTML = '<div class="log-entry info">Логи пусты</div>';
+                return;
+            }
+
+            container.innerHTML = systemLogs.map(log => {
+                const className = log.type === 'ERROR' ? 'error' : 
+                                log.type === 'WARNING' ? 'warning' : 
+                                log.type === 'SUCCESS' ? 'success' : 'info';
+                
+                let html = `<div class="log-entry ${className}">
+                    [${log.time}] ${log.type}: ${log.message}`;
+                
+                if (log.details) {
+                    html += `<div style="margin-left: 20px; margin-top: 5px; opacity: 0.8; font-size: 10px;">
+                        ${log.details.replace(/</g, '&lt;').replace(/>/g, '&gt;')}
+                    </div>`;
+                }
+                
+                html += `</div>`;
+                return html;
+            }).join('');
+        }
 
         // ===== ИНИЦИАЛИЗАЦИЯ =====
         document.addEventListener('DOMContentLoaded', function() {
-            // Проверяем аутентификацию
             const password = localStorage.getItem('techflow_admin_logged');
             if (!password) {
                 const pwd = prompt('🔐 Введите пароль админ панели:');
@@ -789,76 +756,140 @@
                 localStorage.setItem('techflow_admin_logged', 'true');
             }
 
+            addLog('INFO', 'Admin panel initialized');
+
             // Загружаем данные
             loadAllNews();
             loadAllComments();
+            loadCategories();
             loadTemplates();
             updateStatistics();
 
-            // Восстанавливаем токен
-            const saved = localStorage.getItem('techflow_github_token');
-            if (saved) {
-                document.getElementById('githubToken').value = saved;
-            }
+            // Восстанавливаем настройки
+            document.getElementById('githubToken').value = localStorage.getItem('techflow_github_token') || '';
+            document.getElementById('githubUsername').value = localStorage.getItem('techflow_github_username') || '';
+            document.getElementById('githubRepo').value = localStorage.getItem('techflow_github_repo') || 'techflow-news';
+
+            // Восстанавливаем переменные из localStorage
+            githubToken = localStorage.getItem('techflow_github_token') || '';
+            githubUsername = localStorage.getItem('techflow_github_username') || '';
+            githubRepo = localStorage.getItem('techflow_github_repo') || 'techflow-news';
+
+            updateCategorySelect();
+            displayTemplates();
+            displayCategories();
         });
 
         // ===== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК =====
         function switchTab(tabName) {
-            // Скрываем все вкладки
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
             });
 
-            // Показываем нужную вкладку
             document.getElementById(tabName).classList.add('active');
 
-            // Обновляем кнопки навигации
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
             event.target.classList.add('active');
 
-            // Обновляем данные при открытии вкладки
             if (tabName === 'manage-news') {
                 displayNewsList();
             } else if (tabName === 'diagnostics') {
                 runDiagnostics();
+            } else if (tabName === 'categories') {
+                displayCategories();
+            } else if (tabName === 'templates') {
+                displayTemplates();
             }
         }
 
-        // ===== ЗАГРУЗКА НОВОСТЕЙ =====
+        // ===== ЗАГРУЗКА ДАННЫХ =====
         async function loadAllNews() {
             try {
                 const response = await fetch('data/news.json');
                 if (response.ok) {
                     allNews = await response.json();
-                    console.log('✅ News loaded:', allNews.length);
+                    addLog('SUCCESS', 'News loaded', `${allNews.length} items`);
                 } else {
-                    console.warn('⚠️ news.json not found, using empty array');
+                    addLog('WARNING', 'news.json not found', `Status: ${response.status}`);
                     allNews = [];
                 }
             } catch (error) {
-                console.error('❌ Error loading news:', error);
+                addLog('ERROR', 'Failed to load news', error.message);
                 allNews = [];
-                logError('LOAD_NEWS', error.message);
             }
         }
 
-        // ===== ЗАГРУЗКА КОММЕНТАРИЕВ =====
         async function loadAllComments() {
             try {
                 const response = await fetch('data/comments.json');
                 if (response.ok) {
                     allComments = await response.json();
-                    console.log('✅ Comments loaded');
+                    addLog('SUCCESS', 'Comments loaded');
                 } else {
-                    console.warn('⚠️ comments.json not found');
+                    addLog('WARNING', 'comments.json not found');
                     allComments = {};
                 }
             } catch (error) {
-                console.error('❌ Error loading comments:', error);
+                addLog('ERROR', 'Failed to load comments', error.message);
                 allComments = {};
             }
+        }
+
+        async function loadCategories() {
+            try {
+                const response = await fetch('data/categories.json');
+                if (response.ok) {
+                    allCategories = await response.json();
+                    addLog('SUCCESS', 'Categories loaded', `${allCategories.length} items`);
+                } else {
+                    // Используем категории по умолчанию
+                    allCategories = [
+                        { id: 'ai', name: 'ИИ', emoji: '🤖' },
+                        { id: 'gadgets', name: 'Гаджеты', emoji: '📱' },
+                        { id: 'software', name: 'ПО', emoji: '💻' },
+                        { id: 'hardware', name: 'Железо', emoji: '🔧' },
+                        { id: 'crypto', name: 'Крипто', emoji: '💰' }
+                    ];
+                    addLog('WARNING', 'Using default categories');
+                }
+            } catch (error) {
+                addLog('ERROR', 'Failed to load categories', error.message);
+                allCategories = [];
+            }
+        }
+
+        async function loadTemplates() {
+            try {
+                const response = await fetch('data/templates.json');
+                if (response.ok) {
+                    allTemplates = await response.json();
+                    addLog('SUCCESS', 'Templates loaded', `${allTemplates.length} items`);
+                } else {
+                    allTemplates = getDefaultTemplates();
+                }
+            } catch (error) {
+                addLog('ERROR', 'Failed to load templates', error.message);
+                allTemplates = getDefaultTemplates();
+            }
+        }
+
+        function getDefaultTemplates() {
+            return [
+                {
+                    id: 1,
+                    name: '🚀 Продукт запуск',
+                    desc: 'Для новых продуктов',
+                    content: '### О продукте\n\n[Описание продукта]\n\n### Ключевые особенности\n\n- Особенность 1\n- Особенность 2\n- Особенность 3'
+                },
+                {
+                    id: 2,
+                    name: '📊 Анализ рынка',
+                    desc: 'Для аналитических статей',
+                    content: '### Обзор рынка\n\n[Информация]\n\n### Ключевые тенденции\n\n1. Тенденция 1\n2. Тенденция 2\n\n### Прогноз\n\n[Прогноз развития]'
+                }
+            ];
         }
 
         // ===== ДОБАВИТЬ НОВОСТЬ =====
@@ -872,13 +903,12 @@
             const source = document.getElementById('newsSource').value.trim();
             const featured = document.getElementById('newsFeatured').checked;
 
-            // Валидация
             if (!title || !excerpt || !fullText) {
                 showMessage('❌ Заполните обязательные поля!', 'error');
+                addLog('ERROR', 'Validation failed', 'Missing required fields');
                 return;
             }
 
-            // Создаем новый объект новости
             const newNews = {
                 id: 'news-' + Date.now(),
                 title: title,
@@ -892,64 +922,268 @@
                 featured: featured
             };
 
-            // Добавляем в массив
             allNews.unshift(newNews);
+            addLog('INFO', 'News item created', `ID: ${newNews.id}`);
 
-            // Сохраняем на GitHub
-            await saveNewsToGitHub();
-
-            // Успех
-            showMessage('✅ Новость успешно опубликована!', 'success');
-            clearForm();
-            updateStatistics();
+            const saved = await saveNewsToGitHub();
+            if (saved) {
+                showMessage('✅ Новость опубликована!', 'success');
+                clearForm();
+                updateStatistics();
+            } else {
+                showMessage('❌ Ошибка при сохранении на GitHub!', 'error');
+            }
         }
 
-        // ===== СОХРАНЕНИЕ НА GITHUB =====
+        // ===== СОХРАНЕНИЕ НА GITHUB (ИСПРАВЛЕННОЕ) =====
         async function saveNewsToGitHub() {
-            if (!githubToken || githubToken.includes('YOUR')) {
-                showMessage('⚠️ Установите GitHub токен в настройках!', 'warning');
+            if (!githubToken || !githubUsername) {
+                showMessage('❌ Установите GitHub токен и username в настройках!', 'error');
+                addLog('ERROR', 'GitHub config missing', 'Token or username not set');
                 return false;
             }
 
             try {
                 const content = JSON.stringify(allNews, null, 2);
-                const encodedContent = btoa(content);
+                
+                // Используем TextEncoder вместо btoa для правильной кодировки
+                const encoder = new TextEncoder();
+                const encoded = encoder.encode(content);
+                const binary = Array.from(encoded).map(b => String.fromCharCode(b)).join('');
+                const base64 = btoa(binary);
 
-                const response = await fetch(
-                    `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/data/news.json`,
-                    {
-                        method: 'PUT',
-                        headers: {
-                            'Authorization': `token ${githubToken}`,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            message: '📰 Update news',
-                            content: encodedContent,
-                            branch: GITHUB_BRANCH
-                        })
-                    }
-                );
+                const url = `${GITHUB_API_URL}/repos/${githubUsername}/${githubRepo}/contents/data/news.json`;
+                
+                addLog('INFO', 'Saving to GitHub', `URL: ${url}`);
 
+                const response = await fetch(url, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${githubToken}`,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/vnd.github.v3+json'
+                    },
+                    body: JSON.stringify({
+                        message: '📰 Update news',
+                        content: base64,
+                        branch: 'main'
+                    })
+                });
+
+                const responseText = await response.text();
+                
                 if (response.ok) {
-                    console.log('✅ Saved to GitHub');
+                    addLog('SUCCESS', 'Saved to GitHub', 'news.json updated');
                     return true;
                 } else {
-                    const error = await response.json();
-                    console.error('❌ GitHub error:', error);
-                    showMessage(`❌ Ошибка GitHub: ${error.message}`, 'error');
-                    logError('GITHUB_API', error.message);
+                    const errorMsg = responseText;
+                    addLog('ERROR', 'GitHub save failed', `Status: ${response.status}, ${errorMsg.substring(0, 200)}`);
+                    showMessage(`❌ GitHub ошибка: ${response.status}`, 'error');
                     return false;
                 }
             } catch (error) {
-                console.error('❌ Error saving to GitHub:', error);
-                showMessage('❌ Ошибка сохранения на GitHub!', 'error');
-                logError('GITHUB_SAVE', error.message);
+                addLog('ERROR', 'GitHub save exception', error.message);
+                showMessage('❌ Ошибка при сохранении!', 'error');
                 return false;
             }
         }
 
-        // ===== ОТОБРАЖЕНИЕ СПИСКА НОВОСТЕЙ =====
+        // ===== УПРАВЛЕНИЕ КАТЕГОРИЯМИ =====
+        async function addCategory() {
+            const id = document.getElementById('categoryId').value.trim();
+            const name = document.getElementById('categoryName').value.trim();
+            const emoji = document.getElementById('categoryEmoji').value.trim();
+
+            if (!id || !name || !emoji) {
+                showMessage('❌ Заполните все поля!', 'error');
+                return;
+            }
+
+            if (allCategories.find(c => c.id === id)) {
+                showMessage('❌ Категория уже существует!', 'error');
+                return;
+            }
+
+            allCategories.push({ id, name, emoji });
+            addLog('SUCCESS', 'Category added', `${name} (${id})`);
+
+            document.getElementById('categoryId').value = '';
+            document.getElementById('categoryName').value = '';
+            document.getElementById('categoryEmoji').value = '';
+
+            await saveCategoryToGitHub();
+            updateCategorySelect();
+            displayCategories();
+            showMessage('✅ Категория добавлена!', 'success');
+        }
+
+        async function deleteCategory(id) {
+            if (!confirm('Удалить категорию?')) return;
+
+            allCategories = allCategories.filter(c => c.id !== id);
+            addLog('SUCCESS', 'Category deleted', id);
+
+            await saveCategoryToGitHub();
+            updateCategorySelect();
+            displayCategories();
+            showMessage('✅ Категория удалена!', 'success');
+        }
+
+        async function saveCategoryToGitHub() {
+            if (!githubToken || !githubUsername) return;
+
+            try {
+                const content = JSON.stringify(allCategories, null, 2);
+                const encoder = new TextEncoder();
+                const encoded = encoder.encode(content);
+                const binary = Array.from(encoded).map(b => String.fromCharCode(b)).join('');
+                const base64 = btoa(binary);
+
+                const url = `${GITHUB_API_URL}/repos/${githubUsername}/${githubRepo}/contents/data/categories.json`;
+
+                await fetch(url, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${githubToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: '🏷️ Update categories',
+                        content: base64,
+                        branch: 'main'
+                    })
+                });
+            } catch (error) {
+                addLog('WARNING', 'Failed to save categories', error.message);
+            }
+        }
+
+        function updateCategorySelect() {
+            const select = document.getElementById('newsCategory');
+            select.innerHTML = allCategories.map(cat => 
+                `<option value="${cat.id}">${cat.emoji} ${cat.name}</option>`
+            ).join('');
+        }
+
+        function displayCategories() {
+            const list = document.getElementById('categoriesList');
+            if (allCategories.length === 0) {
+                list.innerHTML = '<p>Категорий нет</p>';
+                return;
+            }
+
+            list.innerHTML = allCategories.map(cat => `
+                <div class="category-item">
+                    <div>
+                        <span class="category-emoji">${cat.emoji}</span>
+                        <strong>${cat.name}</strong> <small>(${cat.id})</small>
+                    </div>
+                    <button class="btn btn-small btn-danger" onclick="deleteCategory('${cat.id}')">🗑️</button>
+                </div>
+            `).join('');
+        }
+
+        // ===== УПРАВЛЕНИЕ ШАБЛОНАМИ =====
+        async function createTemplate() {
+            const name = document.getElementById('templateName').value.trim();
+            const desc = document.getElementById('templateDesc').value.trim();
+            const content = document.getElementById('templateContent').value.trim();
+
+            if (!name || !desc || !content) {
+                showMessage('❌ Заполните все поля!', 'error');
+                return;
+            }
+
+            const newTemplate = {
+                id: Date.now(),
+                name: name,
+                desc: desc,
+                content: content
+            };
+
+            allTemplates.unshift(newTemplate);
+            addLog('SUCCESS', 'Template created', name);
+
+            document.getElementById('templateName').value = '';
+            document.getElementById('templateDesc').value = '';
+            document.getElementById('templateContent').value = '';
+
+            await saveTemplateToGitHub();
+            displayTemplates();
+            showMessage('✅ Шаблон создан!', 'success');
+        }
+
+        async function deleteTemplate(id) {
+            if (!confirm('Удалить шаблон?')) return;
+
+            allTemplates = allTemplates.filter(t => t.id !== id);
+            addLog('SUCCESS', 'Template deleted', id);
+
+            await saveTemplateToGitHub();
+            displayTemplates();
+            showMessage('✅ Шаблон удален!', 'success');
+        }
+
+        async function saveTemplateToGitHub() {
+            if (!githubToken || !githubUsername) return;
+
+            try {
+                const content = JSON.stringify(allTemplates, null, 2);
+                const encoder = new TextEncoder();
+                const encoded = encoder.encode(content);
+                const binary = Array.from(encoded).map(b => String.fromCharCode(b)).join('');
+                const base64 = btoa(binary);
+
+                const url = `${GITHUB_API_URL}/repos/${githubUsername}/${githubRepo}/contents/data/templates.json`;
+
+                await fetch(url, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${githubToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: '📋 Update templates',
+                        content: base64,
+                        branch: 'main'
+                    })
+                });
+            } catch (error) {
+                addLog('WARNING', 'Failed to save templates', error.message);
+            }
+        }
+
+        function displayTemplates() {
+            const grid = document.getElementById('templatesGrid');
+            if (allTemplates.length === 0) {
+                grid.innerHTML = '<p>Шаблонов нет</p>';
+                return;
+            }
+
+            grid.innerHTML = allTemplates.map(template => `
+                <div class="template-card">
+                    <div class="template-name">${template.name}</div>
+                    <div class="template-desc">${template.desc}</div>
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <button class="btn btn-small btn-primary" style="flex: 1;" onclick="useTemplate(${template.id})">Использовать</button>
+                        <button class="btn btn-small btn-danger" onclick="deleteTemplate(${template.id})">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function useTemplate(templateId) {
+            const template = allTemplates.find(t => t.id === templateId);
+            if (!template) return;
+
+            document.getElementById('newsExcerpt').value = template.content.substring(0, 200) || '';
+            document.getElementById('newsFullText').value = template.content;
+            switchTab('add-news');
+            showMessage('✅ Шаблон загружен!', 'success');
+            addLog('INFO', 'Template used', template.name);
+        }
+
+        // ===== УПРАВЛЕНИЕ НОВОСТЯМИ =====
         function displayNewsList() {
             const newsList = document.getElementById('newsList');
             const searchTerm = document.getElementById('searchNews').value.toLowerCase();
@@ -975,27 +1209,25 @@
                         </div>
                     </div>
                     <div class="news-item-actions">
-                        <button class="btn btn-small btn-secondary" onclick="editNews('${news.id}')">✏️ Править</button>
-                        <button class="btn btn-small btn-danger" onclick="deleteNews('${news.id}')">🗑️ Удалить</button>
+                        <button class="btn btn-small btn-secondary" onclick="editNews('${news.id}')">✏️</button>
+                        <button class="btn btn-small btn-danger" onclick="deleteNews('${news.id}')">🗑️</button>
                     </div>
                 </div>
             `).join('');
         }
 
-        // ===== УДАЛИТЬ НОВОСТЬ =====
         async function deleteNews(newsId) {
-            if (!confirm('❌ Вы уверены? Это действие нельзя отменить!')) {
-                return;
-            }
+            if (!confirm('Вы уверены?')) return;
 
             allNews = allNews.filter(n => n.id !== newsId);
+            addLog('SUCCESS', 'News deleted', newsId);
+
             await saveNewsToGitHub();
-            showMessage('✅ Новость удалена!', 'success');
             displayNewsList();
             updateStatistics();
+            showMessage('✅ Новость удалена!', 'success');
         }
 
-        // ===== РЕДАКТИРОВАНИЕ НОВОСТИ =====
         function editNews(newsId) {
             const news = allNews.find(n => n.id === newsId);
             if (!news) return;
@@ -1012,7 +1244,6 @@
             switchTab('add-news');
         }
 
-        // ===== ОЧИСТИТЬ ФОРМУ =====
         function clearForm() {
             document.getElementById('newsTitle').value = '';
             document.getElementById('newsExcerpt').value = '';
@@ -1023,99 +1254,30 @@
             document.getElementById('newsFeatured').checked = false;
         }
 
-        // ===== ШАБЛОНЫ =====
-        const TEMPLATES = [
-            {
-                id: 1,
-                name: '🚀 Продукт запуск',
-                desc: 'Шаблон для статей о запуске нового продукта',
-                content: {
-                    excerpt: 'Компания объявила о запуске нового продукта...',
-                    fullText: '### О продукте\n\n[Описание продукта]\n\n### Ключевые особенности\n\n- Особенность 1\n- Особенность 2\n- Особенность 3\n\n### Цена и доступность\n\n[Информация о цене и доступности]\n\n### Отзывы\n\n[Отзывы первых пользователей]'
-                }
-            },
-            {
-                id: 2,
-                name: '📊 Анализ рынка',
-                desc: 'Шаблон для аналитических статей о рынке',
-                content: {
-                    excerpt: 'Анализ текущего состояния рынка показывает...',
-                    fullText: '### Обзор рынка\n\n[Общая информация о рынке]\n\n### Ключевые тенденции\n\n1. Тенденция 1\n2. Тенденция 2\n3. Тенденция 3\n\n### Прогноз\n\n[Прогноз развития]\n\n### Выводы\n\n[Основные выводы и рекомендации]'
-                }
-            },
-            {
-                id: 3,
-                name: '🎯 Гайд/Туториал',
-                desc: 'Шаблон для пошаговых гайдов и туториалов',
-                content: {
-                    excerpt: 'Пошаговое руководство для начинающих...',
-                    fullText: '### Требования\n\n- Требование 1\n- Требование 2\n\n### Шаг 1: [Название]\n\n[Описание шага 1]\n\n### Шаг 2: [Название]\n\n[Описание шага 2]\n\n### Шаг 3: [Название]\n\n[Описание шага 3]\n\n### Итоги\n\n[Итоги и полезные ссылки]'
-                }
-            },
-            {
-                id: 4,
-                name: '📰 Новость дня',
-                desc: 'Шаблон для срочных новостей',
-                content: {
-                    excerpt: 'Последние новости из мира технологий...',
-                    fullText: '### Что произошло\n\n[Основная информация о событии]\n\n### Детали\n\n[Подробное описание]\n\n### Реакция\n\n[Реакция компаний и экспертов]\n\n### Что дальше\n\n[Прогноз развития событий]'
-                }
-            },
-            {
-                id: 5,
-                name: '💡 Идея/Концепт',
-                desc: 'Шаблон для статей об инновационных идеях',
-                content: {
-                    excerpt: 'Новая инновационная идея может изменить индустрию...',
-                    fullText: '### Суть идеи\n\n[Описание основной идеи]\n\n### Проблема\n\n[Какую проблему решает идея]\n\n### Решение\n\n[Как идея решает проблему]\n\n### Потенциал\n\n[Потенциал и возможности развития]\n\n### Вызовы\n\n[Основные вызовы и препятствия]'
-                }
-            },
-            {
-                id: 6,
-                name: '🔬 Исследование',
-                desc: 'Шаблон для статей о научных исследованиях',
-                content: {
-                    excerpt: 'Новое исследование показало интересные результаты...',
-                    fullText: '### Предыстория\n\n[Контекст исследования]\n\n### Методология\n\n[Как проводилось исследование]\n\n### Результаты\n\n[Ключевые результаты]\n\n### Выводы\n\n[Научные выводы]\n\n### Применение\n\n[Практическое применение результатов]'
-                }
-            }
-        ];
-
-        function loadTemplates() {
-            const grid = document.getElementById('templatesGrid');
-            grid.innerHTML = TEMPLATES.map(template => `
-                <div class="template-card">
-                    <div class="template-name">${template.name}</div>
-                    <div class="template-desc">${template.desc}</div>
-                    <button class="template-btn" onclick="useTemplate(${template.id})">Использовать</button>
-                </div>
-            `).join('');
-        }
-
-        function useTemplate(templateId) {
-            const template = TEMPLATES.find(t => t.id === templateId);
-            if (!template) return;
-
-            document.getElementById('newsExcerpt').value = template.content.excerpt;
-            document.getElementById('newsFullText').value = template.content.fullText;
-            switchTab('add-news');
-            showMessage('✅ Шаблон загружен! Заполните остальные поля.', 'success');
-        }
-
-        // ===== СОХРАНЕНИЕ ТОКЕНА =====
-        function saveToken() {
+        // ===== СОХРАНЕНИЕ НАСТРОЕК =====
+        function saveSettings() {
             const token = document.getElementById('githubToken').value.trim();
-            if (!token) {
-                showMessage('❌ Введите токен!', 'error');
+            const username = document.getElementById('githubUsername').value.trim();
+            const repo = document.getElementById('githubRepo').value.trim();
+
+            if (!token || !username || !repo) {
+                showMessage('❌ Заполните все поля!', 'error');
                 return;
             }
 
-            githubToken = token;
             localStorage.setItem('techflow_github_token', token);
-            showMessage('✅ Токен сохранен!', 'success');
+            localStorage.setItem('techflow_github_username', username);
+            localStorage.setItem('techflow_github_repo', repo);
+
+            githubToken = token;
+            githubUsername = username;
+            githubRepo = repo;
+
+            showMessage('✅ Настройки сохранены!', 'success');
+            addLog('SUCCESS', 'Settings saved');
         }
 
-        // ===== ОБНОВЛЕНИЕ СТАТИСТИКИ =====
+        // ===== СТАТИСТИКА =====
         function updateStatistics() {
             document.getElementById('totalNews').textContent = allNews.length;
 
@@ -1131,112 +1293,201 @@
             document.getElementById('lastUpdate').textContent = new Date().toLocaleString('ru-RU');
         }
 
-        // ===== ДИАГНОСТИКА =====
+        // ===== ДИАГНОСТИКА (ПОЛНОСТЬЮ ПЕРЕРАБОТАНА) =====
         async function runDiagnostics() {
             const list = document.getElementById('diagnosticsList');
-            list.innerHTML = '<p style="text-align: center; color: #999;">Выполняется диагностика...</p>';
+            list.innerHTML = '<p style="text-align: center;"><span class="spinner"></span> Диагностика...</p>';
+
+            addLog('INFO', 'Diagnostics started');
 
             const results = [];
 
-            // Проверка файлов
-            const checks = [
-                { name: 'data/news.json', url: 'data/news.json' },
-                { name: 'data/comments.json', url: 'data/comments.json' },
-                { name: 'assets/css/style.css', url: 'assets/css/style.css' },
-                { name: 'assets/js/app.js', url: 'assets/js/app.js' },
-                { name: 'index.html', url: 'index.html' }
+            // 1. Проверка файлов
+            const files = [
+                { name: 'data/news.json', emoji: '📰' },
+                { name: 'data/comments.json', emoji: '💬' },
+                { name: 'data/categories.json', emoji: '🏷️' },
+                { name: 'data/templates.json', emoji: '📋' },
+                { name: 'assets/css/style.css', emoji: '🎨' },
+                { name: 'assets/js/app.js', emoji: '⚙️' },
+                { name: 'index.html', emoji: '📄' }
             ];
 
-            for (const check of checks) {
+            for (const file of files) {
                 try {
-                    const response = await fetch(check.url);
+                    const response = await fetch(file.name);
+                    const status = response.ok ? 'success' : 'error';
+                    const message = response.ok ? '✅ Найден' : `❌ ${response.status}`;
+                    
                     results.push({
-                        name: check.name,
-                        status: response.ok ? 'ok' : 'failed',
-                        message: response.ok ? '✅ Найден' : `❌ Ошибка ${response.status}`
+                        name: `${file.emoji} ${file.name}`,
+                        status: status,
+                        message: message,
+                        details: response.ok ? `Size: ${response.headers.get('content-length') || '?'} bytes` : 'File not found'
                     });
+                    
+                    addLog(status === 'success' ? 'SUCCESS' : 'ERROR', `File check: ${file.name}`, message);
                 } catch (error) {
                     results.push({
-                        name: check.name,
-                        status: 'failed',
-                        message: '❌ Не найден'
+                        name: `${file.emoji} ${file.name}`,
+                        status: 'error',
+                        message: '❌ Ошибка',
+                        details: error.message
                     });
+                    addLog('ERROR', `File check failed: ${file.name}`, error.message);
                 }
             }
 
-            // Проверка GitHub
-            const githubCheck = await checkGitHub();
-            results.push({
-                name: '🔌 GitHub API',
-                status: githubCheck ? 'ok' : 'failed',
-                message: githubCheck ? '✅ Подключено' : '❌ Ошибка подключения'
-            });
+            // 2. Проверка GitHub (ПОЛНАЯ ДИАГНОСТИКА)
+            const githubResult = await checkGitHubAPI();
+            results.push(githubResult);
+
+            // 3. Проверка LocalStorage
+            const storageCheck = {
+                name: '💾 LocalStorage',
+                status: localStorage.getItem('techflow_admin_logged') ? 'success' : 'warning',
+                message: localStorage.getItem('techflow_admin_logged') ? '✅ Доступно' : '⚠️ Пусто',
+                details: `Used: ${new Blob(Object.values(localStorage)).size} bytes`
+            };
+            results.push(storageCheck);
+
+            // 4. Проверка памяти
+            if (performance.memory) {
+                const memCheck = {
+                    name: '🧠 Память',
+                    status: performance.memory.usedJSHeapSize < performance.memory.jsHeapSizeLimit * 0.9 ? 'success' : 'warning',
+                    message: performance.memory.usedJSHeapSize < performance.memory.jsHeapSizeLimit * 0.9 ? '✅ OK' : '⚠️ Высокое использование',
+                    details: `Used: ${(performance.memory.usedJSHeapSize / 1048576).toFixed(2)} MB / ${(performance.memory.jsHeapSizeLimit / 1048576).toFixed(2)} MB`
+                };
+                results.push(memCheck);
+            }
 
             // Отображение результатов
             list.innerHTML = results.map(result => `
                 <div class="diagnostic-item ${result.status}">
                     <div class="diagnostic-name">${result.name}</div>
-                    <div class="diagnostic-status ${result.status === 'ok' ? 'ok' : 'failed'}">
+                    <div class="diagnostic-status ${result.status === 'success' ? 'ok' : result.status === 'warning' ? 'warning' : 'failed'}">
                         ${result.message}
                     </div>
                 </div>
+                ${result.details ? `
+                <div style="width: 100%; margin-top: 10px; background: #f5f5f5; padding: 10px; border-radius: 4px; font-size: 11px; color: #666;">
+                    ${result.details.replace(/</g, '&lt;').replace(/>/g, '&gt;')}
+                </div>
+                ` : ''}
             `).join('');
+
+            addLog('SUCCESS', 'Diagnostics completed', `${results.length} checks`);
         }
 
-        async function checkGitHub() {
+        async function checkGitHubAPI() {
+            const name = '🔌 GitHub API';
+            
+            if (!githubToken || !githubUsername) {
+                return {
+                    name: name,
+                    status: 'error',
+                    message: '❌ Не настроено',
+                    details: 'Установите token и username в настройках'
+                };
+            }
+
             try {
-                const response = await fetch(
-                    `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}`,
-                    {
-                        headers: { 'Authorization': `token ${githubToken}` }
-                    }
+                // Проверка самого токена
+                const tokenCheck = await fetch(`${GITHUB_API_URL}/user`, {
+                    headers: { 'Authorization': `token ${githubToken}` }
+                });
+
+                if (!tokenCheck.ok) {
+                    addLog('ERROR', 'GitHub token invalid', `Status: ${tokenCheck.status}`);
+                    return {
+                        name: name,
+                        status: 'error',
+                        message: '❌ Неверный токен',
+                        details: `HTTP ${tokenCheck.status} - Проверьте токен в настройках`
+                    };
+                }
+
+                const userData = await tokenCheck.json();
+
+                // Проверка доступа к репозиторию
+                const repoCheck = await fetch(
+                    `${GITHUB_API_URL}/repos/${githubUsername}/${githubRepo}`,
+                    { headers: { 'Authorization': `token ${githubToken}` } }
                 );
-                return response.ok;
+
+                if (!repoCheck.ok) {
+                    addLog('ERROR', 'GitHub repo not accessible', `Status: ${repoCheck.status}`);
+                    return {
+                        name: name,
+                        status: 'error',
+                        message: '❌ Репо не найдено',
+                        details: `HTTP ${repoCheck.status} - Проверьте username и название репо`
+                    };
+                }
+
+                // Проверка файла news.json
+                const fileCheck = await fetch(
+                    `${GITHUB_API_URL}/repos/${githubUsername}/${githubRepo}/contents/data/news.json`,
+                    { headers: { 'Authorization': `token ${githubToken}` } }
+                );
+
+                let fileStatus = 'success';
+                let fileMessage = '✅ Подключено';
+                let fileDetails = `User: ${userData.login}\nRepo: ${githubUsername}/${githubRepo}\nBranch: main`;
+
+                if (!fileCheck.ok) {
+                    fileStatus = 'warning';
+                    fileMessage = '⚠️ Файл news.json не найден';
+                    fileDetails += `\nОшибка доступа к файлу (${fileCheck.status})`;
+                }
+
+                addLog('SUCCESS', 'GitHub API working', `User: ${userData.login}`);
+
+                return {
+                    name: name,
+                    status: fileStatus,
+                    message: fileMessage,
+                    details: fileDetails
+                };
+
             } catch (error) {
-                return false;
+                addLog('ERROR', 'GitHub API error', error.message);
+                return {
+                    name: name,
+                    status: 'error',
+                    message: '❌ Ошибка подключения',
+                    details: error.message
+                };
             }
         }
 
-        // ===== ЛОГИРОВАНИЕ =====
-        function logError(type, message) {
-            errorLogs.unshift({
-                type: type,
-                message: message,
-                time: new Date().toLocaleTimeString()
-            });
-
-            if (errorLogs.length > 100) {
-                errorLogs.pop();
-            }
-
-            updateLogsDisplay();
-        }
-
-        function updateLogsDisplay() {
-            const container = document.getElementById('logsContainer');
-            const logs = errorLogs.map(log => `[${log.time}] ${log.type}: ${log.message}`).join('\n');
-            container.textContent = logs || 'Логов нет';
-        }
-
+        // ===== ЛОГИ =====
         function downloadLogs() {
-            const logs = errorLogs.map(log => `[${log.time}] ${log.type}: ${log.message}`).join('\n');
+            const logs = systemLogs.map(log => 
+                `[${log.time}] ${log.type}: ${log.message}${log.details ? '\n  Details: ' + log.details : ''}`
+            ).join('\n');
+
             const blob = new Blob([logs], { type: 'text/plain' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `techflow-errors-${new Date().toISOString().slice(0, 10)}.log`;
+            a.download = `techflow-logs-${new Date().toISOString().slice(0, 10)}.log`;
             a.click();
+
+            addLog('SUCCESS', 'Logs downloaded');
         }
 
         function clearLogs() {
-            if (confirm('Вы уверены?')) {
-                errorLogs = [];
+            if (confirm('Очистить логи?')) {
+                systemLogs = [];
                 updateLogsDisplay();
                 showMessage('✅ Логи очищены!', 'success');
+                addLog('SUCCESS', 'Logs cleared');
             }
         }
 
-        // ===== СТАТУС СООБЩЕНИЯ =====
+        // ===== СООБЩЕНИЯ =====
         function showMessage(text, type) {
             const msg = document.getElementById('statusMessage');
             msg.textContent = text;
